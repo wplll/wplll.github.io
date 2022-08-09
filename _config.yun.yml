@@ -1,0 +1,63 @@
+language: zh-CN
+reward: false
+avatar:
+  url: /images/1.jpg
+  mickey_mouse: true
+
+banner:
+  enable: true
+  title: wpl'web
+  border: true
+  cloud:
+    enable: true
+    color: white
+  go_down:
+    enable: true
+    icon: ri:arrow-down-s-line
+
+footer:
+  live_time:
+    enable: true
+    prefix: 本博客已运行
+    since: 2022
+    start_time: '2022-05-26T00:00:00'
+    
+  support:
+    enable: true
+    title: 又拍云
+    link: https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral
+    logo: https://cdn.jsdelivr.net/gh/YunYouJun/cdn/img/logo/upyun-logo.png
+    prefix: 本网站由
+    suffix: 提供 CDN 加速
+
+mourn:
+  enable: true
+  days:
+    - 4-4
+
+mode: time
+
+menu:
+  home:
+    path: /
+    icon: ri:home-4-line
+  list:
+    - type: archives
+      path: /archives/
+      icon: ri:archive-line
+    - type: categories
+      path: /categories/
+      icon: ri:folder-2-line  
+  custom:
+    title: 文档
+    path: https://wplll.github.io
+    icon: ri:settings-line
+
+wordcloud:
+  enable: true
+
+creative_commons:
+  license: zero
+  post: true
+  language: deed.zh
+  clipboard: false
