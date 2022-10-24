@@ -1,3 +1,6 @@
+---
+title: XGBoost实战
+---
 ```python
 from xgboost import XGBRegressor as XGBR
 from sklearn.ensemble import RandomForestRegressor as RFR
