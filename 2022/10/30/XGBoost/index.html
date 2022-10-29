@@ -1,0 +1,1290 @@
+<!DOCTYPE html><html lang="zh-Hans"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="w_pl"><meta name="copyright" content="w_pl"><meta name="generator" content="Hexo 5.4.2"><meta name="theme" content="hexo-theme-yun"><title>XGBoost | wpl'web</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/star-markdown-css@0.4.1/dist/yun/yun-markdown.min.css"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/prism-theme-vars/base.css"><script src="https://fastly.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>function initScrollReveal() {
+  [".post-card",".markdown-body img"].forEach((target)=> {
+    ScrollReveal().reveal(target);
+  })
+}
+document.addEventListener("DOMContentLoaded", initScrollReveal);
+document.addEventListener("pjax:success", initScrollReveal);
+</script><link rel="stylesheet" type="text/css" href="https://fastly.jsdelivr.net/npm/katex@latest/dist/katex.min.css"><script defer src="https://fastly.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script><link rel="stylesheet" type="text/css" href="https://fastly.jsdelivr.net/npm/katex@latest/dist/contrib/copy-tex.min.css"><script defer src="https://fastly.jsdelivr.net/npm/katex@latest/dist/contrib/copy-tex.min.js"></script><script defer src="https://fastly.jsdelivr.net/npm/katex@latest/dist/contrib/auto-render.min.js"></script><script type="module">import { renderKatex } from '/js/utils.js'
+document.addEventListener("DOMContentLoaded", () => {
+  renderKatex({
+    ...{},
+    ...true?.options,
+  });
+});</script><link rel="icon" type="image/svg+xml" href="/yun.svg"><link rel="mask-icon" href="/yun.svg" color="#0078E7"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="preconnect" href="https://fastly.jsdelivr.net/npm/" crossorigin><script id="yun-config">
+    window.Yun = {}
+    window.CONFIG = {"hostname":"wplll.github.io","root":"/","title":"wpl'web","version":"1.10.9","mode":"time","copycode":true,"page":{"isPost":true},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}.","hits":"${hits} results found","hits_time":"${hits} results found in ${time} ms"},"anonymous_image":"https://cdn.yunyoujun.cn/img/avatar/none.jpg","say":{"api":"https://el-bot-api.vercel.app/api/words/young"},"fireworks":{"colors":null},"vendors":{"host":"https://fastly.jsdelivr.net/npm/","darken":"https://fastly.jsdelivr.net/npm/darken@1.5.0"}};
+  </script><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script src="/js/hexo-theme-yun.js" type="module"></script><meta name="description" content="根据网易的xgboost课程，结合他们的pdf文件以及python代码写的一篇博客 1234567891011from xgboost import XGBRegressor as XGBRfrom sklearn.ensemble import RandomForestRegressor as RFRfrom sklearn.linear_model import LinearRegressio">
+<meta property="og:type" content="article">
+<meta property="og:title" content="XGBoost">
+<meta property="og:url" content="https://wplll.github.io/2022/10/30/XGBoost/index.html">
+<meta property="og:site_name" content="wpl&#39;web">
+<meta property="og:description" content="根据网易的xgboost课程，结合他们的pdf文件以及python代码写的一篇博客 1234567891011from xgboost import XGBRegressor as XGBRfrom sklearn.ensemble import RandomForestRegressor as RFRfrom sklearn.linear_model import LinearRegressio">
+<meta property="og:locale">
+<meta property="og:image" content="https://wplll.github.io/images/xgb_1.png">
+<meta property="og:image" content="https://wplll.github.io/images/xgb_2.png">
+<meta property="og:image" content="https://wplll.github.io/images/xgb_3.png">
+<meta property="og:image" content="https://wplll.github.io/images/xgb_4.png">
+<meta property="og:image" content="https://wplll.github.io/images/xgb_5.png">
+<meta property="og:image" content="https://wplll.github.io/images/xgb_6.png">
+<meta property="og:image" content="https://wplll.github.io/images/xgb_7.png">
+<meta property="og:image" content="https://wplll.github.io/images/xgb_8.png">
+<meta property="og:image" content="https://wplll.github.io/images/xgb_9.png">
+<meta property="og:image" content="https://wplll.github.io/images/xgb_10.png">
+<meta property="og:image" content="https://wplll.github.io/images/xgb_11.png">
+<meta property="og:image" content="https://wplll.github.io/images/xgb_12.png">
+<meta property="og:image" content="https://wplll.github.io/images/xgb_13.png">
+<meta property="og:image" content="https://wplll.github.io/images/xgb_14.png">
+<meta property="article:published_time" content="2022-10-29T18:09:31.624Z">
+<meta property="article:modified_time" content="2022-10-29T18:25:25.619Z">
+<meta property="article:author" content="w_pl">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wplll.github.io/images/xgb_1.png"><script>(function() {
+  if (CONFIG.mode !== 'auto') return
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+  const setting = localStorage.getItem('darken-mode') || 'auto'
+  if (setting === 'dark' || (prefersDark && setting !== 'light'))
+    document.documentElement.classList.toggle('dark', true)
+})()</script><!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head><body><script src="https://code.iconify.design/2/2.1.1/iconify.min.js"></script><script>// Define global variable
+IconifyProviders = {
+  // Empty prefix: overwrite default API provider configuration
+  '': {
+    // Use custom API first, use Iconify public API as backup
+    resources: [
+        'https://api.iconify.design',
+    ],
+    // Wait for 1 second before switching API hosts
+    rotate: 1000,
+  },
+};</script><script defer src="https://fastly.jsdelivr.net/npm/animejs@latest"></script><script defer src="/js/ui/fireworks.js" type="module"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/js/sidebar.js" type="module"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="Table of Contents"><span class="icon iconify" data-icon="ri:list-ordered"></span></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="Overview"><span class="icon iconify" data-icon="ri:passport-line"></span></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info mickey-mouse"><a class="site-author-avatar" href="/about/" title="w_pl"><img width="96" loading="lazy" src="/images/1.jpg" alt="w_pl"></a><div class="site-author-name"><a href="/about/">w_pl</a></div><span class="site-name">wpl'web</span><sub class="site-subtitle">沉沦虚调 懊丧无声</sub><div class="site-description"></div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="Home"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:home-4-line"></span></span></a><div class="site-state-item"><a href="/archives/" title="Archives"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:archive-line"></span></span><span class="site-state-item-count">2</span></a></div><div class="site-state-item"><a href="/categories/" title="Categories"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:folder-2-line"></span></span><span class="site-state-item-count">0</span></a></div><div class="site-state-item"><a href="/tags/" title="Tags"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:price-tag-3-line"></span></span><span class="site-state-item-count">0</span></a></div><a class="site-state-item hty-icon-button" href="https://wplll.github.io" title="文档"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:settings-line"></span></span></a></nav><hr style="margin-bottom:0.5rem"><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" href="/links/" title="我的小伙伴们" style="color:dodgerblue"><span class="icon iconify" data-icon="ri:genderless-line"></span></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><span class="icon iconify" data-icon="ri:contrast-2-line"></span></a></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AF%BC%E5%85%A5%E5%8F%82%E6%95%B0"><span class="toc-number">1.</span> <span class="toc-text">导入参数</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AF%B9%E6%A8%A1%E5%9E%8B%E8%BF%9B%E8%A1%8C%E8%AE%AD%E7%BB%83"><span class="toc-number">2.</span> <span class="toc-text">对模型进行训练</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%A4%E5%8F%89%E9%AA%8C%E8%AF%81%EF%BC%8C%E4%BD%BF%E7%94%A8%E6%B2%A1%E6%9C%89%E8%AE%AD%E7%BB%83%E7%9A%84%E6%A8%A1%E5%9E%8B"><span class="toc-number">3.</span> <span class="toc-text">交叉验证，使用没有训练的模型</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%A8%A1%E5%9E%8B%E5%AF%B9%E6%AF%94"><span class="toc-number">4.</span> <span class="toc-text">模型对比</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%BB%98%E5%88%B6%E5%AD%A6%E4%B9%A0%E6%9B%B2%E7%BA%BF"><span class="toc-number">5.</span> <span class="toc-text">绘制学习曲线</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%BF%9B%E8%A1%8C%E8%B0%83%E5%8F%82"><span class="toc-number">6.</span> <span class="toc-text">进行调参</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%98%E5%88%B6%E5%AD%A6%E4%B9%A0%E6%9B%B2%E7%BA%BF%E8%A7%82%E5%AF%9Fn-estimators%E7%9A%84%E5%BD%B1%E5%93%8D"><span class="toc-number">6.1.</span> <span class="toc-text">绘制学习曲线观察n_estimators的影响</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B910-1010%E8%BF%9B%E8%A1%8C%E8%AE%A1%E7%AE%97"><span class="toc-number">6.1.1.</span> <span class="toc-text">对10~1010进行计算</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E5%B7%AE%E4%B8%8E%E6%B3%9B%E5%8C%96%E8%AF%AF%E5%B7%AE"><span class="toc-number">6.1.2.</span> <span class="toc-text">方差与泛化误差</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%86%E5%8C%96%E5%AD%A6%E4%B9%A0%E6%9B%B2%E7%BA%BF%EF%BC%8C%E6%89%BE%E5%88%B0%E6%9C%80%E4%BD%B3n-estimators"><span class="toc-number">6.1.3.</span> <span class="toc-text">细化学习曲线，找到最佳n_estimators</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%89%E6%94%BE%E5%9B%9E%E9%9A%8F%E6%9C%BA%E6%8A%BD%E6%A0%B7%EF%BC%8C%E9%87%8D%E8%A6%81%E5%8F%82%E6%95%B0subsample"><span class="toc-number">6.2.</span> <span class="toc-text">有放回随机抽样，重要参数subsample</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%86%E8%A7%A3%E6%9C%89%E6%94%BE%E5%9B%9E%E9%9A%8F%E6%9C%BA%E6%8A%BD%E6%A0%B7"><span class="toc-number">6.3.</span> <span class="toc-text">了解有放回随机抽样</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9B%E8%A1%8C%E5%AD%A6%E4%B9%A0%E6%9B%B2%E7%BA%BF%E5%88%86%E6%9E%90"><span class="toc-number">6.3.1.</span> <span class="toc-text">进行学习曲线分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%86n-estimators%E5%92%8Csubsample%E4%B8%80%E8%B5%B7%E8%BF%9B%E8%A1%8C%E8%AE%AD%E7%BB%83%E5%8F%96%E5%BE%97%E6%9C%80%E4%BC%98%E8%A7%A3"><span class="toc-number">6.3.2.</span> <span class="toc-text">将n_estimators和subsample一起进行训练取得最优解</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%AD%E4%BB%A3%E5%86%B3%E7%AD%96%E6%A0%91%EF%BC%8C%E9%87%8D%E8%A6%81%E5%8F%82%E6%95%B0eta"><span class="toc-number">6.4.</span> <span class="toc-text">迭代决策树，重要参数eta</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#XGBoost"><span class="toc-number">7.</span> <span class="toc-text">XGBoost</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%89%E6%8B%A9%E5%BC%B1%E8%AF%84%E4%BC%B0%E5%99%A8%EF%BC%9Abooster%E5%8F%82%E6%95%B0"><span class="toc-number">7.1.</span> <span class="toc-text">选择弱评估器：booster参数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%AE%E6%A0%87%E5%87%BD%E6%95%B0%EF%BC%9Aobjective"><span class="toc-number">7.2.</span> <span class="toc-text">目标函数：objective</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8sklearn%E8%BF%9B%E8%A1%8Cxgboost"><span class="toc-number">7.2.1.</span> <span class="toc-text">使用sklearn进行xgboost</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8xgboost%E5%BA%93"><span class="toc-number">7.2.2.</span> <span class="toc-text">使用xgboost库</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E7%B1%BBDMatrix%E8%AF%BB%E5%8F%96%E6%95%B0%E6%8D%AE"><span class="toc-number">7.2.2.0.1.</span> <span class="toc-text">使用类DMatrix读取数据</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%86%99%E6%98%8E%E5%8F%82%E6%95%B0"><span class="toc-number">7.2.2.1.</span> <span class="toc-text">写明参数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B1%BBtrain%EF%BC%8C%E5%8F%AF%E4%BB%A5%E7%9B%B4%E6%8E%A5%E5%AF%BC%E5%85%A5%E7%9A%84%E5%8F%82%E6%95%B0%E6%98%AF%E8%AE%AD%E7%BB%83%E6%95%B0%E6%8D%AE%EF%BC%8C%E6%A0%91%E7%9A%84%E6%95%B0%E9%87%8F%EF%BC%8C%E5%85%B6%E4%BB%96%E5%8F%82%E6%95%B0%E9%83%BD%E9%9C%80%E8%A6%81%E9%80%9A%E8%BF%87params%E6%9D%A5%E5%AF%BC%E5%85%A5"><span class="toc-number">7.2.2.2.</span> <span class="toc-text">类train，可以直接导入的参数是训练数据，树的数量，其他参数都需要通过params来导入</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%8E%A5%E5%8F%A3"><span class="toc-number">7.2.2.3.</span> <span class="toc-text">使用接口</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AF%BC%E5%85%A5sklearn%E5%BA%93%E8%BF%9B%E8%A1%8CR%E6%96%B9%E5%92%8C%E5%9D%87%E6%96%B9%E8%AF%AF%E5%B7%AE%E8%AF%84%E4%BC%B0"><span class="toc-number">7.2.2.4.</span> <span class="toc-text">导入sklearn库进行R方和均方误差评估</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B1%82%E8%A7%A3%E7%9B%AE%E6%A0%87%E5%87%BD%E6%95%B0"><span class="toc-number">7.3.</span> <span class="toc-text">求解目标函数 </span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E6%95%B0%E5%8C%96%E5%86%B3%E7%AD%96%E6%A0%91-f-k-x-%E5%8F%82%E6%95%B0alpha%EF%BC%8Clambda"><span class="toc-number">7.4.</span> <span class="toc-text">参数化决策树$f_k(x)$:参数alpha，lambda</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%BB%E6%89%BE%E6%9C%80%E4%BD%B3%E6%A0%91%E7%BB%93%E6%9E%84%EF%BC%9A%E6%B1%82%E8%A7%A3-omega-%E4%B8%8ET"><span class="toc-number">7.5.</span> <span class="toc-text">寻找最佳树结构：求解$\omega$与T</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%BB%E6%89%BE%E6%9C%80%E4%BD%B3%E5%88%86%E6%94%AF"><span class="toc-number">7.6.</span> <span class="toc-text">寻找最佳分支</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%A9%E6%A0%91%E5%81%9C%E6%AD%A2%E7%94%9F%E9%95%BF%EF%BC%9A%E5%8F%82%E6%95%B0-gamma"><span class="toc-number">7.7.</span> <span class="toc-text">让树停止生长：参数  $\gamma$</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E4%B9%B3%E8%85%BA%E7%99%8C%E6%95%B0%E6%8D%AE%E9%9B%86%E6%9D%A5%E7%9C%8B%E7%9C%8Bxgboost%E5%88%86%E7%B1%BB%E6%A8%A1%E5%9E%8B%E4%B8%ADgamma%E7%9A%84%E8%A1%A8%E7%8E%B0"><span class="toc-number">7.7.1.</span> <span class="toc-text">使用乳腺癌数据集来看看xgboost分类模型中gamma的表现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%87%E6%8B%9F%E5%90%88%E5%8F%82%E6%95%B0%EF%BC%9A%E5%89%AA%E6%9E%9D%E5%8F%82%E6%95%B0%E4%B8%8E%E5%9B%9E%E5%BD%92%E6%A8%A1%E5%9E%8B%E8%B0%83%E5%8F%82"><span class="toc-number">7.8.</span> <span class="toc-text">过拟合参数：剪枝参数与回归模型调参</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E5%9E%8B%E4%BF%9D%E5%AD%98%E5%92%8C%E8%B0%83%E7%94%A8"><span class="toc-number">7.9.</span> <span class="toc-text">模型保存和调用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#pickle%E4%BF%9D%E5%AD%98%E5%92%8C%E8%B0%83%E7%94%A8%E6%A8%A1%E5%9E%8B"><span class="toc-number">7.9.1.</span> <span class="toc-text">pickle保存和调用模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8joblib%E4%BF%9D%E5%AD%98%E5%92%8C%E8%B0%83%E7%94%A8%E6%A8%A1%E5%9E%8B"><span class="toc-number">7.9.2.</span> <span class="toc-text">使用joblib保存和调用模型</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E7%B1%BB%E6%A1%88%E4%BE%8B%EF%BC%9Axgb%E4%B8%AD%E6%A0%B7%E6%9C%AC%E4%B8%8D%E5%9D%87%E8%A1%A1%E9%97%AE%E9%A2%98"><span class="toc-number">7.10.</span> <span class="toc-text">分类案例：xgb中样本不均衡问题</span></a></li></ol></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="hty-card post-block" itemscope itemtype="https://schema.org/Article" style="--smc-primary:#0078E7;"><link itemprop="mainEntityOfPage" href="https://wplll.github.io/2022/10/30/XGBoost/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="w_pl"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="wpl'web"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">XGBoost</h1><div class="post-meta"><div class="post-time"><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:calendar-line"></span></span> <time title="Created: 2022-10-30 02:09:31" itemprop="dateCreated datePublished" datetime="2022-10-30T02:09:31+08:00">2022-10-30</time></div><div class="post-classify"></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body"><p>根据网易的xgboost课程，结合他们的pdf文件以及python代码写的一篇博客<br></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> xgboost <span class="keyword">import</span> XGBRegressor <span class="keyword">as</span> XGBR</span><br><span class="line"><span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> RandomForestRegressor <span class="keyword">as</span> RFR</span><br><span class="line"><span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> LinearRegression <span class="keyword">as</span> LinearR</span><br><span class="line"><span class="keyword">from</span> sklearn.datasets <span class="keyword">import</span> load_boston</span><br><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> KFold, cross_val_score <span class="keyword">as</span> CVS, train_test_split <span class="keyword">as</span> TTS</span><br><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> mean_squared_error <span class="keyword">as</span> MSE</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">from</span> time <span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> datetime</span><br></pre></td></tr></table></figure>
+
+<h1 id="导入参数"><a href="#导入参数" class="headerlink" title="导入参数"></a>导入参数</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> warnings</span><br><span class="line">warnings.filterwarnings(<span class="string">&#x27;ignore&#x27;</span>)</span><br><span class="line"></span><br><span class="line">data = load_boston() <span class="comment"># 以波士顿房价为训练集</span></span><br><span class="line"></span><br><span class="line">x = data.data</span><br><span class="line">y = data.target</span><br><span class="line"></span><br><span class="line">Xtrain,Xtest,Ytrain,Ytest = TTS(x,y,test_size=<span class="number">0.3</span>,random_state=<span class="number">420</span>)</span><br></pre></td></tr></table></figure>
+
+<h1 id="对模型进行训练"><a href="#对模型进行训练" class="headerlink" title="对模型进行训练"></a>对模型进行训练</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">reg = XGBR(n_estimators=<span class="number">100</span>).fit(Xtrain,Ytrain) <span class="comment"># 参数实例化</span></span><br><span class="line">reg.predict(Xtest) <span class="comment"># 模型接口</span></span><br><span class="line"></span><br><span class="line">reg.score(Xtest,Ytest) <span class="comment"># 模型评估，r^2</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>0.9050988968414799
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MSE(Ytest,reg.predict(Xtest)) <span class="comment"># 均方误差</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>8.830916343629323
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reg.feature_importances_ <span class="comment">#模型重要性负数,每一个特征值的权重</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>array([0.01902167, 0.0042109 , 0.01478316, 0.00553537, 0.02222196,
+       0.37914088, 0.01679686, 0.0469872 , 0.04073574, 0.05491759,
+       0.06684221, 0.00869464, 0.3201119 ], dtype=float32)
+</code></pre>
+<h1 id="交叉验证，使用没有训练的模型"><a href="#交叉验证，使用没有训练的模型" class="headerlink" title="交叉验证，使用没有训练的模型"></a>交叉验证，使用没有训练的模型</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">reg = XGBR(n_estimators=<span class="number">100</span>)</span><br><span class="line">CVS(reg,Xtrain,Ytrain,cv=<span class="number">5</span>).mean() <span class="comment"># 模型，数据，折数，得到交叉验证的评估指标 r^2</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>0.7995062821902295
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CVS(reg,Xtrain,Ytrain,cv=<span class="number">5</span>,scoring=<span class="string">&#x27;neg_mean_squared_error&#x27;</span>).mean() <span class="comment">#负均方误差</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>-16.215644229762717
+</code></pre>
+<h1 id="模型对比"><a href="#模型对比" class="headerlink" title="模型对比"></a>模型对比</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rfr = RFR(n_estimators=<span class="number">100</span>) <span class="comment"># 使用随机森林进行对比</span></span><br><span class="line">CVS(rfr,Xtrain,Ytrain,cv=<span class="number">5</span>).mean()</span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>0.8010385665818835
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">lr = LinearR() <span class="comment"># 线性回归</span></span><br><span class="line">CVS(lr,Xtrain,Ytrain,cv=<span class="number">5</span>).mean()</span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>0.6835070597278076
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">reg = XGBR(n_estimators=<span class="number">10</span>,verbosity=<span class="number">0</span>) </span><br><span class="line">CVS(reg,Xtrain,Ytrain,cv=<span class="number">5</span>,scoring=<span class="string">&#x27;neg_mean_squared_error&#x27;</span>).mean()</span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>-18.633733952333067
+</code></pre>
+<h1 id="绘制学习曲线"><a href="#绘制学习曲线" class="headerlink" title="绘制学习曲线"></a>绘制学习曲线</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">plot_learning_curve</span>(<span class="params">estimator,title, X, y, </span></span><br><span class="line"><span class="params">                        ax=<span class="literal">None</span>, <span class="comment"># 选择子图</span></span></span><br><span class="line"><span class="params">                        ylim=<span class="literal">None</span>, <span class="comment"># 设置纵坐标的取值范围</span></span></span><br><span class="line"><span class="params">                        cv=<span class="literal">None</span>, <span class="comment"># 交叉验证</span></span></span><br><span class="line"><span class="params">                        n_jobs=<span class="literal">None</span> <span class="comment"># 设定索要使用的线程</span></span></span><br><span class="line"><span class="params">                       </span>):</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> learning_curve</span><br><span class="line">    <span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line">    <span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">    </span><br><span class="line">    train_sizes, train_scores, test_scores = learning_curve(estimator, X, y</span><br><span class="line">                                                            ,shuffle=<span class="literal">True</span></span><br><span class="line">                                                            ,cv=cv</span><br><span class="line">                                                            ,random_state=<span class="number">420</span></span><br><span class="line">                                                            ,n_jobs=n_jobs)      </span><br><span class="line">    <span class="keyword">if</span> ax == <span class="literal">None</span>:</span><br><span class="line">        ax = plt.gca()</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        ax = plt.figure()</span><br><span class="line">    ax.set_title(title)</span><br><span class="line">    <span class="keyword">if</span> ylim <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">        ax.set_ylim(*ylim)</span><br><span class="line">    ax.set_xlabel(<span class="string">&quot;Training examples&quot;</span>)</span><br><span class="line">    ax.set_ylabel(<span class="string">&quot;Score&quot;</span>)</span><br><span class="line">    ax.grid() <span class="comment"># 绘制网格，不是必须</span></span><br><span class="line">    ax.plot(train_sizes, np.mean(train_scores, axis=<span class="number">1</span>), <span class="string">&#x27;o-&#x27;</span></span><br><span class="line">            , color=<span class="string">&quot;r&quot;</span>,label=<span class="string">&quot;Training score&quot;</span>)</span><br><span class="line">    ax.plot(train_sizes, np.mean(test_scores, axis=<span class="number">1</span>), <span class="string">&#x27;o-&#x27;</span></span><br><span class="line">            , color=<span class="string">&quot;g&quot;</span>,label=<span class="string">&quot;Test score&quot;</span>)</span><br><span class="line">    ax.legend(loc=<span class="string">&quot;best&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> ax</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cv = KFold(n_splits=<span class="number">5</span>,shuffle=<span class="literal">True</span>,random_state=<span class="number">42</span>)<span class="comment"># 交叉验证模式</span></span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">plot_learning_curve(XGBR(n_estimators=<span class="number">100</span>,random_state=<span class="number">420</span>),<span class="string">&quot;XGB&quot;</span>,Xtrain,Ytrain,ax=<span class="literal">None</span>,cv=cv)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+
+<p><img src="/images/xgb_1.png" alt="png" loading="lazy"></p>
+<h1 id="进行调参"><a href="#进行调参" class="headerlink" title="进行调参"></a>进行调参</h1><h2 id="绘制学习曲线观察n-estimators的影响"><a href="#绘制学习曲线观察n-estimators的影响" class="headerlink" title="绘制学习曲线观察n_estimators的影响"></a>绘制学习曲线观察n_estimators的影响</h2><h3 id="对10-1010进行计算"><a href="#对10-1010进行计算" class="headerlink" title="对10~1010进行计算"></a>对10~1010进行计算</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">axisx = <span class="built_in">range</span>(<span class="number">10</span>,<span class="number">1010</span>,<span class="number">50</span>)</span><br><span class="line">rs = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> axisx:</span><br><span class="line">    reg = XGBR(n_estimators=i,random_state=<span class="number">420</span>)</span><br><span class="line">    rs.append(CVS(reg,Xtrain,Ytrain,cv=cv).mean())</span><br><span class="line"><span class="built_in">print</span>(axisx[rs.index(<span class="built_in">max</span>(rs))],<span class="built_in">max</span>(rs))</span><br><span class="line">plt.figure(figsize=(<span class="number">20</span>,<span class="number">5</span>))</span><br><span class="line">plt.plot(axisx,rs,c=<span class="string">&quot;red&quot;</span>,label=<span class="string">&quot;XGB&quot;</span>)</span><br><span class="line">plt.legend()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+<pre><code>160 0.8320776498992342
+</code></pre>
+<p><img src="/images/xgb_2.png" alt="png" loading="lazy"></p>
+<h3 id="方差与泛化误差"><a href="#方差与泛化误差" class="headerlink" title="方差与泛化误差"></a>方差与泛化误差</h3><p>泛化误差：E(f;D),方差：var,偏差：bias,噪声：ξ。<br><br>$~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~$<strong>E(f;D) &#x3D; bias² + var + ξ²</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">axisx = <span class="built_in">range</span>(<span class="number">50</span>,<span class="number">1050</span>,<span class="number">50</span>)</span><br><span class="line">rs = [] <span class="comment"># r^2</span></span><br><span class="line">var = [] <span class="comment"># 方差</span></span><br><span class="line">ge = [] <span class="comment"># 可控部分泛化误差</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> axisx:</span><br><span class="line">    reg = XGBR(n_estimators=i,random_state=<span class="number">420</span>)</span><br><span class="line">    cvresult = CVS(reg,Xtrain,Ytrain,cv=cv)</span><br><span class="line">    </span><br><span class="line">    rs.append(cvresult.mean()) <span class="comment"># 记录1-偏差,r^2   </span></span><br><span class="line">    var.append(cvresult.var()) <span class="comment"># 记录方差    </span></span><br><span class="line">    ge.append((<span class="number">1</span> - cvresult.mean())**<span class="number">2</span>+cvresult.var())<span class="comment"># 计算泛化误差的可控部分</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(axisx[rs.index(<span class="built_in">max</span>(rs))],<span class="built_in">max</span>(rs),var[rs.index(<span class="built_in">max</span>(rs))]) <span class="comment">#打印R2最高所对应的参数取值，并打印这个参数下的方差</span></span><br><span class="line"><span class="built_in">print</span>(axisx[var.index(<span class="built_in">min</span>(var))],rs[var.index(<span class="built_in">min</span>(var))],<span class="built_in">min</span>(var)) <span class="comment">#打印方差最低时对应的参数取值，并打印这个参数下的R2</span></span><br><span class="line"><span class="built_in">print</span>(axisx[ge.index(<span class="built_in">min</span>(ge))],rs[ge.index(<span class="built_in">min</span>(ge))],var[ge.index(<span class="built_in">min</span>(ge))],<span class="built_in">min</span>(ge)) <span class="comment">#打印泛化误差可控部分的参数取值，并打印这个参数下的R^2，方差以及泛化误差的可控部分</span></span><br><span class="line">plt.figure(figsize=(<span class="number">20</span>,<span class="number">5</span>))</span><br><span class="line">plt.plot(axisx,rs,c=<span class="string">&quot;red&quot;</span>,label=<span class="string">&quot;XGB&quot;</span>)</span><br><span class="line">plt.legend()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+<pre><code>100 0.8320924293483107 0.005344212126112929
+100 0.8320924293483107 0.005344212126112929
+100 0.8320924293483107 0.005344212126112929 0.03353716440826495
+</code></pre>
+<p><img src="/images/xgb_3.png" alt="png" loading="lazy"></p>
+<h3 id="细化学习曲线，找到最佳n-estimators"><a href="#细化学习曲线，找到最佳n-estimators" class="headerlink" title="细化学习曲线，找到最佳n_estimators"></a>细化学习曲线，找到最佳n_estimators</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">axisx = <span class="built_in">range</span>(<span class="number">50</span>,<span class="number">200</span>,<span class="number">10</span>) <span class="comment"># 将范围缩小</span></span><br><span class="line">rs = []</span><br><span class="line">var = []</span><br><span class="line">ge = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> axisx:</span><br><span class="line">    reg = XGBR(n_estimators=i,random_state=<span class="number">420</span>)</span><br><span class="line">    cvresult = CVS(reg,Xtrain,Ytrain,cv=cv)</span><br><span class="line">    </span><br><span class="line">    rs.append(cvresult.mean())</span><br><span class="line">    var.append(cvresult.var())</span><br><span class="line">    ge.append((<span class="number">1</span> - cvresult.mean())**<span class="number">2</span>+cvresult.var())</span><br><span class="line">    </span><br><span class="line"><span class="built_in">print</span>(axisx[rs.index(<span class="built_in">max</span>(rs))],<span class="built_in">max</span>(rs),var[rs.index(<span class="built_in">max</span>(rs))])</span><br><span class="line"><span class="built_in">print</span>(axisx[var.index(<span class="built_in">min</span>(var))],rs[var.index(<span class="built_in">min</span>(var))],<span class="built_in">min</span>(var))</span><br><span class="line"><span class="built_in">print</span>(axisx[ge.index(<span class="built_in">min</span>(ge))],rs[ge.index(<span class="built_in">min</span>(ge))],var[ge.index(<span class="built_in">min</span>(ge))],<span class="built_in">min</span>(ge))</span><br><span class="line">rs = np.array(rs)</span><br><span class="line">var = np.array(var)*<span class="number">0.01</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># R^2线</span></span><br><span class="line">plt.figure(figsize=(<span class="number">20</span>,<span class="number">5</span>))</span><br><span class="line">plt.plot(axisx,rs,c=<span class="string">&quot;black&quot;</span>,label=<span class="string">&quot;XGB&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加方差线</span></span><br><span class="line">plt.plot(axisx,rs+var,c=<span class="string">&quot;red&quot;</span>,linestyle=<span class="string">&#x27;-.&#x27;</span>)</span><br><span class="line">plt.plot(axisx,rs-var,c=<span class="string">&quot;red&quot;</span>,linestyle=<span class="string">&#x27;-.&#x27;</span>)</span><br><span class="line">plt.legend()</span><br><span class="line">plt.show()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 绘制泛化误差可控部分</span></span><br><span class="line">plt.figure(figsize=(<span class="number">20</span>,<span class="number">5</span>))</span><br><span class="line">plt.plot(axisx,ge,c=<span class="string">&quot;gray&quot;</span>,linestyle=<span class="string">&#x27;-.&#x27;</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+<pre><code>100 0.8320924293483107 0.005344212126112929
+100 0.8320924293483107 0.005344212126112929
+100 0.8320924293483107 0.005344212126112929 0.03353716440826495
+</code></pre>
+<p><img src="/images/xgb_4.png" alt="png" loading="lazy"></p>
+<p><img src="/images/xgb_5.png" alt="png" loading="lazy"></p>
+<p>得到最佳取值为100。</p>
+<h2 id="有放回随机抽样，重要参数subsample"><a href="#有放回随机抽样，重要参数subsample" class="headerlink" title="有放回随机抽样，重要参数subsample"></a>有放回随机抽样，重要参数subsample</h2><h2 id="了解有放回随机抽样"><a href="#了解有放回随机抽样" class="headerlink" title="了解有放回随机抽样"></a>了解有放回随机抽样<br></h2><p>$~~~~~~~$第一次随机从原始数据集中进行随机抽取，将其进行建模。把模型结果，即预测错误的样本反馈回原始数据集，增加其权重。然后循环此过程，不断修正之前判断错误的样本。一定程度上提升模型准度。<br><br>$~~~~~~~$在sklearn和xgboost中，使用subsample作为随机抽样参数，范围为(0，1]，默认为一，为抽取占原数据比例。</p>
+<h3 id="进行学习曲线分析"><a href="#进行学习曲线分析" class="headerlink" title="进行学习曲线分析"></a>进行学习曲线分析</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">axisx = np.linspace(<span class="number">0.75</span>,<span class="number">1</span>,<span class="number">25</span>)<span class="comment"># 随机选取数值，多次调整，缩减范围</span></span><br><span class="line">rs = []</span><br><span class="line">var = []</span><br><span class="line">ge = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> axisx:</span><br><span class="line">    reg = XGBR(n_estimators=<span class="number">100</span>,subsample=i,random_state=<span class="number">420</span>)</span><br><span class="line">    cvresult = CVS(reg,Xtrain,Ytrain,cv=cv)</span><br><span class="line">    rs.append(cvresult.mean())</span><br><span class="line">    var.append(cvresult.var())</span><br><span class="line">    ge.append((<span class="number">1</span> - cvresult.mean())**<span class="number">2</span>+cvresult.var())</span><br><span class="line">    </span><br><span class="line"><span class="built_in">print</span>(axisx[rs.index(<span class="built_in">max</span>(rs))],<span class="built_in">max</span>(rs),var[rs.index(<span class="built_in">max</span>(rs))])</span><br><span class="line"><span class="built_in">print</span>(axisx[var.index(<span class="built_in">min</span>(var))],rs[var.index(<span class="built_in">min</span>(var))],<span class="built_in">min</span>(var))</span><br><span class="line"><span class="built_in">print</span>(axisx[ge.index(<span class="built_in">min</span>(ge))],rs[ge.index(<span class="built_in">min</span>(ge))],var[ge.index(<span class="built_in">min</span>(ge))],<span class="built_in">min</span>(ge))</span><br><span class="line">rs = np.array(rs)</span><br><span class="line">var = np.array(var)</span><br><span class="line">plt.figure(figsize=(<span class="number">20</span>,<span class="number">5</span>))</span><br><span class="line">plt.plot(axisx,rs,c=<span class="string">&quot;black&quot;</span>,label=<span class="string">&quot;XGB&quot;</span>)</span><br><span class="line">plt.plot(axisx,rs+var,c=<span class="string">&quot;red&quot;</span>,linestyle=<span class="string">&#x27;-.&#x27;</span>)</span><br><span class="line">plt.plot(axisx,rs-var,c=<span class="string">&quot;red&quot;</span>,linestyle=<span class="string">&#x27;-.&#x27;</span>)</span><br><span class="line">plt.legend()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+<pre><code>1.0 0.8320924293483107 0.005344212126112929
+0.9375 0.8213387927010547 0.0023009355462403113
+1.0 0.8320924293483107 0.005344212126112929 0.03353716440826495
+</code></pre>
+<p><img src="/images/xgb_6.png" alt="png" loading="lazy"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">reg = XGBR(n_estimators=<span class="number">100</span>,subsample=<span class="number">0.9375</span>,random_state=<span class="number">420</span>).fit(Xtrain,Ytrain)</span><br><span class="line">reg.score(Xtest,Ytest)</span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>0.9175041345374846
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MSE(Ytest,reg.predict(Xtest))</span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>7.676560781152187
+</code></pre>
+<p>显然优于没有设置时的模型。如果模型准确率降低则取消使用此参数。</p>
+<h3 id="将n-estimators和subsample一起进行训练取得最优解"><a href="#将n-estimators和subsample一起进行训练取得最优解" class="headerlink" title="将n_estimators和subsample一起进行训练取得最优解"></a>将n_estimators和subsample一起进行训练取得最优解</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">axisx_sub = np.linspace(<span class="number">0.75</span>,<span class="number">1</span>,<span class="number">25</span>)</span><br><span class="line">axisx_n_est = <span class="built_in">range</span>(<span class="number">50</span>,<span class="number">200</span>,<span class="number">10</span>)</span><br><span class="line">rs = []</span><br><span class="line">var = []</span><br><span class="line">ge = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> axisx_n_est:</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> axisx_sub:</span><br><span class="line">        reg = XGBR(n_estimators=i,subsample=j,random_state=<span class="number">420</span>,eta=<span class="number">0.1</span>)</span><br><span class="line">        cvresult = CVS(reg,Xtrain,Ytrain,cv=cv)</span><br><span class="line">        rs.append(cvresult.mean())</span><br><span class="line">        var.append(cvresult.var())</span><br><span class="line">        ge.append((<span class="number">1</span> - cvresult.mean())**<span class="number">2</span>+cvresult.var())</span><br><span class="line">        </span><br><span class="line"><span class="built_in">print</span>(axisx_n_est[<span class="built_in">int</span>(rs.index(<span class="built_in">max</span>(rs))/<span class="number">25</span>)],axisx_sub[rs.index(<span class="built_in">max</span>(rs))%<span class="number">25</span>],<span class="built_in">max</span>(rs),var[rs.index(<span class="built_in">max</span>(rs))])</span><br><span class="line"><span class="built_in">print</span>(axisx_n_est[<span class="built_in">int</span>(var.index(<span class="built_in">min</span>(var))/<span class="number">25</span>)],axisx_sub[var.index(<span class="built_in">min</span>(var))%<span class="number">25</span>],rs[var.index(<span class="built_in">min</span>(var))],<span class="built_in">min</span>(var))</span><br><span class="line"><span class="built_in">print</span>(axisx_n_est[<span class="built_in">int</span>(ge.index(<span class="built_in">min</span>(ge))/<span class="number">25</span>)],axisx_sub[ge.index(<span class="built_in">min</span>(ge))%<span class="number">25</span>],rs[ge.index(<span class="built_in">min</span>(ge))],var[ge.index(<span class="built_in">min</span>(ge))],<span class="built_in">min</span>(ge))</span><br></pre></td></tr></table></figure>
+
+<pre><code>160 0.9583333333333333 0.8432917907566264 0.004614845818885538
+50 0.9479166666666666 0.8339831443137825 0.003529311838690004
+190 0.9479166666666666 0.842287142171737 0.004044787817216516 0.028918133341574434
+</code></pre>
+<h2 id="迭代决策树，重要参数eta"><a href="#迭代决策树，重要参数eta" class="headerlink" title="迭代决策树，重要参数eta"></a>迭代决策树，重要参数eta<br></h2><p>参数eta为迭代决策树的步长。<br><br>迭代树公式为：<br><br>$~~~~~~~~~~~~~~~~~~~~~~~~~$$y_i^{k+1} &#x3D; y_i^k + ŋf_{k+1}^{x_i}$<br><br>eta即为ŋ，也称为学习率，取值范围为[0,1]。在xgboost中默认为0.3，在sklearn中为0.1。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 评分函数</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">regassess</span>(<span class="params">reg,Xtrain,Ytrain,cv,scoring = [<span class="string">&quot;r^2&quot;</span>],show=<span class="literal">True</span></span>):</span><br><span class="line">    score = []</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(scoring)):</span><br><span class="line">        <span class="keyword">if</span> show:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;&#123;&#125;:&#123;:.2f&#125;&quot;</span>.<span class="built_in">format</span>(scoring[i] <span class="comment">#模型评估指标的名字</span></span><br><span class="line">                                     ,CVS(reg</span><br><span class="line">                                          ,Xtrain,Ytrain</span><br><span class="line">                                          ,cv=cv,scoring=scoring[i]).mean()))</span><br><span class="line">        score.append(CVS(reg,Xtrain,Ytrain,cv=cv,scoring=scoring[i]).mean())</span><br><span class="line">    <span class="keyword">return</span> score</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">axisx = np.arange(<span class="number">0.05</span>,<span class="number">1</span>,<span class="number">0.05</span>)</span><br><span class="line">rs = []</span><br><span class="line">te = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> axisx:</span><br><span class="line">    reg = XGBR(n_estimators=<span class="number">100</span>,subsample=<span class="number">0.9375</span>,random_state=<span class="number">420</span>,learning_rate=i)</span><br><span class="line">    score = regassess(reg,Xtrain,Ytrain,cv,scoring = [<span class="string">&quot;r2&quot;</span>,<span class="string">&quot;neg_mean_squared_error&quot;</span>],show=<span class="literal">False</span>)</span><br><span class="line">    test = reg.fit(Xtrain,Ytrain).score(Xtest,Ytest)</span><br><span class="line">    rs.append(score[<span class="number">0</span>])</span><br><span class="line">    te.append(test)</span><br><span class="line">    </span><br><span class="line"><span class="built_in">print</span>(axisx[rs.index(<span class="built_in">max</span>(rs))],<span class="built_in">max</span>(rs))</span><br><span class="line">plt.figure(figsize=(<span class="number">20</span>,<span class="number">5</span>))</span><br><span class="line">plt.plot(axisx,te,c=<span class="string">&quot;gray&quot;</span>,label=<span class="string">&quot;test&quot;</span>)</span><br><span class="line">plt.plot(axisx,rs,c=<span class="string">&quot;green&quot;</span>,label=<span class="string">&quot;train&quot;</span>)</span><br><span class="line">plt.legend()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+<pre><code>0.35000000000000003 0.8398273910404873
+</code></pre>
+<p><img src="/images/xgb_7.png" alt="png" loading="lazy"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">reg = XGBR(n_estimators=<span class="number">190</span>,subsample=<span class="number">0.9479166666666666</span>,random_state=<span class="number">420</span>,eta=<span class="number">0.35</span>).fit(Xtrain,Ytrain)</span><br><span class="line">reg.score(Xtest,Ytest)</span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>0.8954798646898599
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MSE(Ytest,reg.predict(Xtest))</span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>9.726004655677164
+</code></pre>
+<p>发现并没有提升，反而下降。eta一般作为模型训练时间的调整指标，如果模型没有错误，一般都会收敛，eta影响并不算大。根据训练经验，eta取值一般在0.1左右</p>
+<h1 id="XGBoost"><a href="#XGBoost" class="headerlink" title="XGBoost"></a>XGBoost<br></h1><h2 id="选择弱评估器：booster参数"><a href="#选择弱评估器：booster参数" class="headerlink" title="选择弱评估器：booster参数"></a>选择弱评估器：booster参数<br></h2><p>$~~~~~~~$在sklearn中为booster参数，在xgboost中为xgb_model。用于选择弱评估器，可以输入的值有：gbtree、gblinear和dart。<strong>gbtree</strong>为梯度提升树，<strong>gblinear</strong>为线性模型，<strong>dart</strong>为抛弃提升树，比梯度提升树有更好的放过拟合功能。在xgboost中必须用param传入参数。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> booster <span class="keyword">in</span> [<span class="string">&quot;gbtree&quot;</span>,<span class="string">&quot;gblinear&quot;</span>,<span class="string">&quot;dart&quot;</span>]:</span><br><span class="line">    reg = XGBR(n_estimators=<span class="number">190</span></span><br><span class="line">               ,subsample=<span class="number">0.9479166666666666</span></span><br><span class="line">               ,learning_rate=<span class="number">0.1</span></span><br><span class="line">               ,random_state=<span class="number">420</span>               </span><br><span class="line">               ,booster=booster).fit(Xtrain,Ytrain)</span><br><span class="line">    <span class="built_in">print</span>(booster)</span><br><span class="line">    <span class="built_in">print</span>(reg.score(Xtest,Ytest))</span><br></pre></td></tr></table></figure>
+
+<pre><code>gbtree
+0.9199261332157886
+gblinear
+0.6525347637145433
+dart
+0.9261191829728914
+</code></pre>
+<h2 id="目标函数：objective"><a href="#目标函数：objective" class="headerlink" title="目标函数：objective"></a>目标函数：objective<br></h2><p>$~~~~~~~$在xgboost中使用目标函数来替代传统损失函数。xgb的目标函数可以写为：<strong>损失函数+模型复杂度</strong>。<br><br>$~~~~~~~~~~~~~~~~~~~$ $Obj &#x3D; \sum_{i&#x3D;1}^m l(y_i , y_i’) + \sum_{k&#x3D;1}^K \Omega(f_k)$</p>
+<p>$~~~~~~~$第一项为损失函数，用来评估模型准确度。第二项为模型复杂度和树结构复杂度有直接联系，运用此函数添加在损失函数之后，可以使模型在准确的同时用最少的运算时间。当两者都最小，则平衡了模型效果和工程能力，使XGBoost运算又快又准。<br><br>$~~~~~~~$方差用于评估模型稳定性，偏差用于评估模型的准确率。对应此目标函数。第一项衡量的是偏差，第二项则衡量方差。所以此目标函数也表示方差偏差平衡，也就是泛化误差。<br><br><br>$~~~~~~~$对于xgboost，可以选择第一项的使用函数。在xgboost中参数为obj(也可以写成object)，在sklearn中为objective。在<strong>xgb.train()</strong> 和<strong>xgb.XGBClassifier()</strong> 中默认为 <strong>binary:logistic</strong>，在<strong>xgb.XGBRegressor()</strong> 中默认为 <strong>reg:linear</strong> 。</p>
+<p>常用的参数有：<br></p>
+<table>
+<thead>
+<tr>
+<th align="center">输入</th>
+<th align="center">使用的损失函数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">reg:linear</td>
+<td align="center">使用线性回归的损失函数，均方误差，回归时使用</td>
+</tr>
+<tr>
+<td align="center">binary:logistic</td>
+<td align="center">使用逻辑回归的损失函数，对数损失log_loss,二分类时使用</td>
+</tr>
+<tr>
+<td align="center">binary:hinge</td>
+<td align="center">使用支持向量机的损失函数，Hinge Loss，二分类时使用</td>
+</tr>
+<tr>
+<td align="center">multi:softmax</td>
+<td align="center">使用softmax损失函数，多分类时使用</td>
+</tr>
+</tbody></table>
+<p><strong>现在推荐使用reg:squarederror来代替reg:linear。</strong><br><br>$~~~~~~~$使用xgboost库来进行训练的流程：<br><br>$xgb.DMatrix() -&gt; param&#x3D;{} -&gt; bst&#x3D;xgb.train(param) -&gt; bst.predict()$ <br><br> $ 读取数据-&gt;设置参数-&gt;训练模型-&gt;预测结果 $</p>
+<h3 id="使用sklearn进行xgboost"><a href="#使用sklearn进行xgboost" class="headerlink" title="使用sklearn进行xgboost"></a>使用sklearn进行xgboost</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">reg = XGBR(n_estimators=<span class="number">190</span>,random_state=<span class="number">420</span>,eta=<span class="number">0.1</span></span><br><span class="line">           ,subsample=<span class="number">0.9479166666666666</span>,booster=<span class="string">&quot;dart&quot;</span>).fit(Xtrain,Ytrain) </span><br><span class="line">reg.score(Xtest,Ytest) </span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>0.9261191829728914
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MSE(Ytest,reg.predict(Xtest))</span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>6.874897054416443
+</code></pre>
+<h3 id="使用xgboost库"><a href="#使用xgboost库" class="headerlink" title="使用xgboost库"></a>使用xgboost库</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> xgboost <span class="keyword">as</span> xgb</span><br></pre></td></tr></table></figure>
+
+<h5 id="使用类DMatrix读取数据"><a href="#使用类DMatrix读取数据" class="headerlink" title="使用类DMatrix读取数据"></a>使用类DMatrix读取数据</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dtrain = xgb.DMatrix(Xtrain,Ytrain) <span class="comment"># 特征矩阵和标签都进行一个传入</span></span><br><span class="line">dtest = xgb.DMatrix(Xtest,Ytest)</span><br></pre></td></tr></table></figure>
+
+<p>如果想要查看数据，可以在导入数据进入DMatrix之前在pandas中查看</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line">pd.DataFrame(Xtrain)</span><br></pre></td></tr></table></figure>
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+<pre><code>.dataframe tbody tr th &#123;
+    vertical-align: top;
+&#125;
+
+.dataframe thead th &#123;
+    text-align: right;
+&#125;
+</code></pre>
+<p></style></p>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>0</th>
+      <th>1</th>
+      <th>2</th>
+      <th>3</th>
+      <th>4</th>
+      <th>5</th>
+      <th>6</th>
+      <th>7</th>
+      <th>8</th>
+      <th>9</th>
+      <th>10</th>
+      <th>11</th>
+      <th>12</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.03041</td>
+      <td>0.0</td>
+      <td>5.19</td>
+      <td>0.0</td>
+      <td>0.515</td>
+      <td>5.895</td>
+      <td>59.6</td>
+      <td>5.6150</td>
+      <td>5.0</td>
+      <td>224.0</td>
+      <td>20.2</td>
+      <td>394.81</td>
+      <td>10.56</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.04113</td>
+      <td>25.0</td>
+      <td>4.86</td>
+      <td>0.0</td>
+      <td>0.426</td>
+      <td>6.727</td>
+      <td>33.5</td>
+      <td>5.4007</td>
+      <td>4.0</td>
+      <td>281.0</td>
+      <td>19.0</td>
+      <td>396.90</td>
+      <td>5.29</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>10.23300</td>
+      <td>0.0</td>
+      <td>18.10</td>
+      <td>0.0</td>
+      <td>0.614</td>
+      <td>6.185</td>
+      <td>96.7</td>
+      <td>2.1705</td>
+      <td>24.0</td>
+      <td>666.0</td>
+      <td>20.2</td>
+      <td>379.70</td>
+      <td>18.03</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.17142</td>
+      <td>0.0</td>
+      <td>6.91</td>
+      <td>0.0</td>
+      <td>0.448</td>
+      <td>5.682</td>
+      <td>33.8</td>
+      <td>5.1004</td>
+      <td>3.0</td>
+      <td>233.0</td>
+      <td>17.9</td>
+      <td>396.90</td>
+      <td>10.21</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.05059</td>
+      <td>0.0</td>
+      <td>4.49</td>
+      <td>0.0</td>
+      <td>0.449</td>
+      <td>6.389</td>
+      <td>48.0</td>
+      <td>4.7794</td>
+      <td>3.0</td>
+      <td>247.0</td>
+      <td>18.5</td>
+      <td>396.90</td>
+      <td>9.62</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>349</th>
+      <td>0.03871</td>
+      <td>52.5</td>
+      <td>5.32</td>
+      <td>0.0</td>
+      <td>0.405</td>
+      <td>6.209</td>
+      <td>31.3</td>
+      <td>7.3172</td>
+      <td>6.0</td>
+      <td>293.0</td>
+      <td>16.6</td>
+      <td>396.90</td>
+      <td>7.14</td>
+    </tr>
+    <tr>
+      <th>350</th>
+      <td>0.12650</td>
+      <td>25.0</td>
+      <td>5.13</td>
+      <td>0.0</td>
+      <td>0.453</td>
+      <td>6.762</td>
+      <td>43.4</td>
+      <td>7.9809</td>
+      <td>8.0</td>
+      <td>284.0</td>
+      <td>19.7</td>
+      <td>395.58</td>
+      <td>9.50</td>
+    </tr>
+    <tr>
+      <th>351</th>
+      <td>6.96215</td>
+      <td>0.0</td>
+      <td>18.10</td>
+      <td>0.0</td>
+      <td>0.700</td>
+      <td>5.713</td>
+      <td>97.0</td>
+      <td>1.9265</td>
+      <td>24.0</td>
+      <td>666.0</td>
+      <td>20.2</td>
+      <td>394.43</td>
+      <td>17.11</td>
+    </tr>
+    <tr>
+      <th>352</th>
+      <td>0.09164</td>
+      <td>0.0</td>
+      <td>10.81</td>
+      <td>0.0</td>
+      <td>0.413</td>
+      <td>6.065</td>
+      <td>7.8</td>
+      <td>5.2873</td>
+      <td>4.0</td>
+      <td>305.0</td>
+      <td>19.2</td>
+      <td>390.91</td>
+      <td>5.52</td>
+    </tr>
+    <tr>
+      <th>353</th>
+      <td>5.58107</td>
+      <td>0.0</td>
+      <td>18.10</td>
+      <td>0.0</td>
+      <td>0.713</td>
+      <td>6.436</td>
+      <td>87.9</td>
+      <td>2.3158</td>
+      <td>24.0</td>
+      <td>666.0</td>
+      <td>20.2</td>
+      <td>100.19</td>
+      <td>16.22</td>
+    </tr>
+  </tbody>
+</table>
+<p>354 rows × 13 columns</p>
+</div>
+
+
+
+<h4 id="写明参数"><a href="#写明参数" class="headerlink" title="写明参数"></a>写明参数</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">param = &#123;<span class="string">&#x27;objective&#x27;</span>:<span class="string">&#x27;reg:squarederror&#x27;</span></span><br><span class="line">         ,<span class="string">&#x27;eta&#x27;</span>:<span class="number">0.1</span></span><br><span class="line">         ,<span class="string">&#x27;booster&#x27;</span>:<span class="string">&#x27;dart&#x27;</span></span><br><span class="line">         ,<span class="string">&#x27;subsample&#x27;</span>:<span class="number">0.9479166666666666</span>&#125;</span><br><span class="line">num_round = <span class="number">190</span> <span class="comment"># n_estimators</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="类train，可以直接导入的参数是训练数据，树的数量，其他参数都需要通过params来导入"><a href="#类train，可以直接导入的参数是训练数据，树的数量，其他参数都需要通过params来导入" class="headerlink" title="类train，可以直接导入的参数是训练数据，树的数量，其他参数都需要通过params来导入"></a>类train，可以直接导入的参数是训练数据，树的数量，其他参数都需要通过params来导入</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bst = xgb.train(param, dtrain, num_round)</span><br></pre></td></tr></table></figure>
+
+<h4 id="使用接口"><a href="#使用接口" class="headerlink" title="使用接口"></a>使用接口</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">preds = bst.predict(dtest)</span><br></pre></td></tr></table></figure>
+
+<h4 id="导入sklearn库进行R方和均方误差评估"><a href="#导入sklearn库进行R方和均方误差评估" class="headerlink" title="导入sklearn库进行R方和均方误差评估"></a>导入sklearn库进行R方和均方误差评估</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> r2_score</span><br><span class="line">r2_score(Ytest,preds)</span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>0.9264166709056179
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MSE(Ytest,preds)</span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>6.8472146465232635
+</code></pre>
+<p>通过对比发现xgboost库本身是优于sklearn库里xgboost的</p>
+<h2 id="求解目标函数"><a href="#求解目标函数" class="headerlink" title="求解目标函数 "></a>求解目标函数 <br></h2><p>$~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~$ $Obj &#x3D; \sum_{i&#x3D;1}^m l(y_i , y_i’) + \sum_{k&#x3D;1}^K \Omega(f_k) $<br></p>
+<p>简化目标函数，将损失函数转换，使用泰勒展开<br></p>
+<p>$~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~$ $\sum_{i&#x3D;1}^m[f_t(x_i)g_i + \frac{1}{2} (f_t(x_i))^2 h_i] + \Omega(f_t)$<br></p>
+<p>$g_i$和$h_i$为在损失函数上对$y_i^{t-1}$的一阶导数和二阶导数</p>
+<h2 id="参数化决策树-f-k-x-参数alpha，lambda"><a href="#参数化决策树-f-k-x-参数alpha，lambda" class="headerlink" title="参数化决策树$f_k(x)$:参数alpha，lambda"></a>参数化决策树$f_k(x)$:参数alpha，lambda</h2><p>$f_k(x_i)$是每个叶子节点的回归值<br><br>所以回归结果为$y_i^k &#x3D; \sum_{k}^K f_k(x_i)$</p>
+<p>使用$q(x_i)$表示样本$x_i$的叶子节点，并用$w_{q(x_i)}$表示第k棵树上第$q(x_i)$叶子节点的分数。所以有：<br><br>$~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~$ $f_k(x_i) &#x3D; w_{q(x_i)}$<br><br>于是得到复杂度计算公式：<br><br>$$\Omega(f) &#x3D; \gamma T + 正则项$$</p>
+<p>利用正则项来控制xgboost的过拟合情况。xgb中参数为alpha和lambda取值为[0,∞],再sklearn中参数为reg_alpha和reg_lambda取值范围和xgboost一样。默认优先使用lambda参数，如果需要alpha参数，可以使用之前的方法将两个参数放在一起来找到最好取值。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#使用网格搜索来查找最佳的参数组合</span></span><br><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> GridSearchCV</span><br><span class="line">param = &#123;<span class="string">&quot;reg_alpha&quot;</span>:np.arange(<span class="number">0</span>,<span class="number">5</span>,<span class="number">0.05</span>),<span class="string">&quot;reg_lambda&quot;</span>:np.arange(<span class="number">0</span>,<span class="number">2</span>,<span class="number">0.05</span>)&#125;</span><br><span class="line">gscv = GridSearchCV(reg,param_grid = param,scoring = <span class="string">&quot;neg_mean_squared_error&quot;</span>,cv=cv)</span><br><span class="line"><span class="comment">#======【TIME WARNING：10~20 mins】======#</span></span><br><span class="line">time0=time()</span><br><span class="line">gscv.fit(Xtrain,Ytrain)</span><br><span class="line"><span class="built_in">print</span>(datetime.datetime.fromtimestamp(time()-time0).strftime(<span class="string">&quot;%M:%S:%f&quot;</span>))</span><br><span class="line">gscv.best_params_</span><br><span class="line">gscv.best_score_</span><br><span class="line">preds = gscv.predict(Xtest)</span><br><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> r2_score,mean_squared_error <span class="keyword">as</span> MSE</span><br><span class="line">r2_score(Ytest,preds)</span><br><span class="line">MSE(Ytest,preds)</span><br></pre></td></tr></table></figure>
+
+<pre><code>56:42:172725
+
+
+
+
+
+7.395192625759336
+</code></pre>
+<h2 id="寻找最佳树结构：求解-omega-与T"><a href="#寻找最佳树结构：求解-omega-与T" class="headerlink" title="寻找最佳树结构：求解$\omega$与T"></a>寻找最佳树结构：求解$\omega$与T</h2><p>通过之前的推到得到新的目标函数：<br></p>
+<p>$~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~$ $ \sum_{i&#x3D;1}^m[f_t(x_i)g_i+\frac{1} {2} (f_t(x_i)^2 h_i)] + \Omega(f_t) $ <br></p>
+<p>$$ &#x3D; \sum_{i&#x3D;1}^m[w_{q(x_i)}g_i+\frac{1}{2} w_{q(x_i)}^2 h_i] + \gamma T + \frac{1}{2}\lambda\sum_{j&#x3D;1}^T w_j^2$$</p>
+<p>有：<br><br>$$\sum_{i&#x3D;1}^m w_q(x_i) * g_i &#x3D; \sum_{j&#x3D;1}^T(w_j\sum_{i∊I_j} g_i)$$</p>
+<p>整理合并后得到：<br><br>$$&#x3D; \sum_{j&#x3D;1}^T [w_j\sum_{i∊I_j}g_i + \frac{1}{2}w_j^2 (\sum_{i∊I_j} h_i + \lambda)] + \gamma T $$</p>
+<p>我们定义 $G_j &#x3D; \sum_{i∊I_j}g_i , H_j &#x3D; \sum_{i∊I_j}h_i $</p>
+<p>最终得到：<br><br>$$Obj^t &#x3D; \sum_{j&#x3D;1}^T [w_jG_j + \frac{1}{2} w_j^2(H_j + \lambda)] + \gamma T$$<br>$$F^*(w_j) &#x3D; w_jG_j + \frac{1}{2}w_j^2(H_j + \lambda)$$</p>
+<p>然后对$F^*$进行偏导求取极小值得到：<br><br>$$w_j &#x3D; -\frac{G_j}{H_j + \lambda}$$</p>
+<p>得到:<br><br>$$Obj^t &#x3D; -\frac{1}{2}\sum_{j&#x3D;1}^T \frac{G_j^2}{H_j + \lambda} + \gamma T$$</p>
+<h2 id="寻找最佳分支"><a href="#寻找最佳分支" class="headerlink" title="寻找最佳分支"></a>寻找最佳分支</h2><p>使用贪婪算法求得，与求解最佳决策树相似，只需要将信息熵修改为目标函数来衡量树的优劣。</p>
+<p>将创建前的树的结构分数与创建节点后的结构分数做差得出的式子称为Gain，需要取得最大Gain来创建新节点，与决策树取得最大信息增益创建节点同理。<br><br>$$Gain &#x3D; \frac{1}{2}[\frac{G_L^2}{H_L + \lambda} + \frac{G_R^2}{H_R + \lambda} - \frac{(G_L + G_R)^2}{H_L + H_R + \lambda}] - \gamma$$</p>
+<h2 id="让树停止生长：参数-gamma"><a href="#让树停止生长：参数-gamma" class="headerlink" title="让树停止生长：参数  $\gamma$"></a>让树停止生长：参数  $\gamma$</h2><p>gamma越大算法越保守，叶子数量越少，算法复杂度越低。在xgboost和sklearn参数名都为gamma都默认为0，取值为[0,+∞)。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 测试与之前方法一致</span></span><br><span class="line">axisx = np.arange(<span class="number">0</span>,<span class="number">5</span>,<span class="number">0.05</span>)</span><br><span class="line">rs = []</span><br><span class="line">var = []</span><br><span class="line">ge = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> axisx:</span><br><span class="line">    reg = XGBR(n_estimators=<span class="number">180</span>,random_state=<span class="number">420</span>,gamma=i)</span><br><span class="line">    result = CVS(reg,Xtrain,Ytrain,cv=cv)</span><br><span class="line">    rs.append(result.mean())</span><br><span class="line">    var.append(result.var())</span><br><span class="line">    ge.append((<span class="number">1</span> - result.mean())**<span class="number">2</span>+result.var())</span><br><span class="line"><span class="built_in">print</span>(axisx[rs.index(<span class="built_in">max</span>(rs))],<span class="built_in">max</span>(rs),var[rs.index(<span class="built_in">max</span>(rs))])</span><br><span class="line"><span class="built_in">print</span>(axisx[var.index(<span class="built_in">min</span>(var))],rs[var.index(<span class="built_in">min</span>(var))],<span class="built_in">min</span>(var))</span><br><span class="line"><span class="built_in">print</span>(axisx[ge.index(<span class="built_in">min</span>(ge))],rs[ge.index(<span class="built_in">min</span>(ge))],var[ge.index(<span class="built_in">min</span>(ge))],<span class="built_in">min</span>(ge))</span><br><span class="line">rs = np.array(rs)</span><br><span class="line">var = np.array(var)*<span class="number">0.1</span></span><br><span class="line">plt.figure(figsize=(<span class="number">20</span>,<span class="number">5</span>))</span><br><span class="line">plt.plot(axisx,rs,c=<span class="string">&quot;black&quot;</span>,label=<span class="string">&quot;XGB&quot;</span>)</span><br><span class="line">plt.plot(axisx,rs+var,c=<span class="string">&quot;red&quot;</span>,linestyle=<span class="string">&#x27;-.&#x27;</span>)</span><br><span class="line">plt.plot(axisx,rs-var,c=<span class="string">&quot;red&quot;</span>,linestyle=<span class="string">&#x27;-.&#x27;</span>)</span><br><span class="line">plt.legend()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+<pre><code>0.8 0.840869937975637 0.005891402581053541
+4.55 0.8270850835330702 0.004605425533747813
+0.6000000000000001 0.8398453482504387 0.004660990862047279 0.030310503339070552
+</code></pre>
+<p><img src="/images/xgb_8.png" alt="png" loading="lazy"></p>
+<p>可以看到无法观测出趋势，所以引入新的工具：xgboost.cv。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> xgboost <span class="keyword">as</span> xgb</span><br><span class="line"></span><br><span class="line"><span class="comment">#为了便捷，使用全数据</span></span><br><span class="line">dfull = xgb.DMatrix(x,y)</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#设定参数</span></span><br><span class="line">param1 = &#123;<span class="string">&#x27;silent&#x27;</span>:<span class="literal">True</span>,<span class="string">&#x27;obj&#x27;</span>:<span class="string">&#x27;reg:linear&#x27;</span>,<span class="string">&quot;gamma&quot;</span>:<span class="number">0</span>&#125;</span><br><span class="line">num_round = <span class="number">190</span></span><br><span class="line">n_fold=<span class="number">5</span> <span class="comment">#sklearn - KFold 交叉验证折数</span></span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#使用类xgb.cv</span></span><br><span class="line">time0 = time()</span><br><span class="line">cvresult1 = xgb.cv(param1, dfull, num_round,n_fold)</span><br><span class="line"><span class="built_in">print</span>(datetime.datetime.fromtimestamp(time()-time0).strftime(<span class="string">&quot;%M:%S:%f&quot;</span>))</span><br></pre></td></tr></table></figure>
+
+<pre><code>00:00:565108
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#查看结果</span></span><br><span class="line">cvresult1 <span class="comment">#随着树不断增加，我们的模型的效果如何变化</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+<pre><code>.dataframe tbody tr th &#123;
+    vertical-align: top;
+&#125;
+
+.dataframe thead th &#123;
+    text-align: right;
+&#125;
+</code></pre>
+<p></style></p>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>train-rmse-mean</th>
+      <th>train-rmse-std</th>
+      <th>test-rmse-mean</th>
+      <th>test-rmse-std</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>17.105578</td>
+      <td>0.129116</td>
+      <td>17.163215</td>
+      <td>0.584297</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>12.337973</td>
+      <td>0.097557</td>
+      <td>12.519736</td>
+      <td>0.473458</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>8.994071</td>
+      <td>0.065756</td>
+      <td>9.404534</td>
+      <td>0.472310</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>6.629481</td>
+      <td>0.050323</td>
+      <td>7.250335</td>
+      <td>0.500342</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>4.954406</td>
+      <td>0.033209</td>
+      <td>5.920812</td>
+      <td>0.591874</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>185</th>
+      <td>0.001209</td>
+      <td>0.000110</td>
+      <td>3.669902</td>
+      <td>0.857671</td>
+    </tr>
+    <tr>
+      <th>186</th>
+      <td>0.001209</td>
+      <td>0.000110</td>
+      <td>3.669902</td>
+      <td>0.857671</td>
+    </tr>
+    <tr>
+      <th>187</th>
+      <td>0.001209</td>
+      <td>0.000110</td>
+      <td>3.669902</td>
+      <td>0.857671</td>
+    </tr>
+    <tr>
+      <th>188</th>
+      <td>0.001209</td>
+      <td>0.000110</td>
+      <td>3.669902</td>
+      <td>0.857671</td>
+    </tr>
+    <tr>
+      <th>189</th>
+      <td>0.001209</td>
+      <td>0.000110</td>
+      <td>3.669902</td>
+      <td>0.857671</td>
+    </tr>
+  </tbody>
+</table>
+<p>190 rows × 4 columns</p>
+</div>
+
+
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">plt.figure(figsize=(<span class="number">20</span>,<span class="number">5</span>))</span><br><span class="line">plt.grid()</span><br><span class="line">plt.plot(<span class="built_in">range</span>(<span class="number">1</span>,<span class="number">191</span>),cvresult1.iloc[:,<span class="number">0</span>],c=<span class="string">&quot;red&quot;</span>,label=<span class="string">&quot;train,gamma=0&quot;</span>)</span><br><span class="line">plt.plot(<span class="built_in">range</span>(<span class="number">1</span>,<span class="number">191</span>),cvresult1.iloc[:,<span class="number">2</span>],c=<span class="string">&quot;orange&quot;</span>,label=<span class="string">&quot;test,gamma=0&quot;</span>)</span><br><span class="line">plt.legend()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+
+<p><img src="/images/xgb_9.png" alt="png" loading="lazy"></p>
+<p>xgboost自带了很多评估指标：</p>
+<table>
+<thead>
+<tr>
+<th align="center">指标</th>
+<th align="center">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">rmse</td>
+<td align="center">回归用，调整后的均方误差</td>
+</tr>
+<tr>
+<td align="center">mae</td>
+<td align="center">回归用，绝对平均误差</td>
+</tr>
+<tr>
+<td align="center">logloss</td>
+<td align="center">二分类用，对数损失</td>
+</tr>
+<tr>
+<td align="center">mlogloss</td>
+<td align="center">多分类用，对数损失</td>
+</tr>
+<tr>
+<td align="center">error</td>
+<td align="center">分类用，分类误差，等于1-准确率</td>
+</tr>
+<tr>
+<td align="center">auc</td>
+<td align="center">发类用，auc面积</td>
+</tr>
+</tbody></table>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">param1 = &#123;<span class="string">&#x27;silent&#x27;</span>:<span class="literal">True</span></span><br><span class="line">          ,<span class="string">&#x27;obj&#x27;</span>:<span class="string">&#x27;reg:linear&#x27;</span></span><br><span class="line">          ,<span class="string">&quot;gamma&quot;</span>:<span class="number">0</span></span><br><span class="line">          ,<span class="string">&quot;eval_metric&quot;</span>:<span class="string">&quot;mae&quot;</span>&#125;<span class="comment"># 在paraml中修改指标</span></span><br><span class="line">cvresult1 = xgb.cv(param1, dfull, num_round,n_fold)</span><br><span class="line"></span><br><span class="line">plt.figure(figsize=(<span class="number">20</span>,<span class="number">5</span>))</span><br><span class="line">plt.grid()</span><br><span class="line">plt.plot(<span class="built_in">range</span>(<span class="number">1</span>,<span class="number">191</span>),cvresult1.iloc[:,<span class="number">0</span>],c=<span class="string">&quot;red&quot;</span>,label=<span class="string">&quot;train,gamma=0&quot;</span>)</span><br><span class="line">plt.plot(<span class="built_in">range</span>(<span class="number">1</span>,<span class="number">191</span>),cvresult1.iloc[:,<span class="number">2</span>],c=<span class="string">&quot;orange&quot;</span>,label=<span class="string">&quot;test,gamma=0&quot;</span>)</span><br><span class="line">plt.legend()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+
+<p><img src="/images/xgb_10.png" alt="png" loading="lazy"></p>
+<p>这个图形可以判断出num_round的大致数目，在75以后，模型趋于平稳，所以可以适量减少树的数量。</p>
+<p>还可以通过此图两条线的差值看出模型出现了过拟合，可以进行修正。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 设置不同的gamma</span></span><br><span class="line">param1 = &#123;<span class="string">&#x27;silent&#x27;</span>:<span class="literal">True</span>,<span class="string">&#x27;obj&#x27;</span>:<span class="string">&#x27;reg:linear&#x27;</span>,<span class="string">&quot;gamma&quot;</span>:<span class="number">0</span>&#125;</span><br><span class="line">param2 = &#123;<span class="string">&#x27;silent&#x27;</span>:<span class="literal">True</span>,<span class="string">&#x27;obj&#x27;</span>:<span class="string">&#x27;reg:linear&#x27;</span>,<span class="string">&quot;gamma&quot;</span>:<span class="number">20</span>&#125;</span><br><span class="line">num_round = <span class="number">190</span></span><br><span class="line">n_fold=<span class="number">5</span></span><br><span class="line"></span><br><span class="line">time0 = time()</span><br><span class="line">cvresult1 = xgb.cv(param1, dfull, num_round,n_fold)</span><br><span class="line"><span class="built_in">print</span>(datetime.datetime.fromtimestamp(time()-time0).strftime(<span class="string">&quot;%M:%S:%f&quot;</span>))</span><br></pre></td></tr></table></figure>
+
+<pre><code>00:00:551680
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">time0 = time()</span><br><span class="line">cvresult2 = xgb.cv(param2, dfull, num_round,n_fold)</span><br><span class="line"><span class="built_in">print</span>(datetime.datetime.fromtimestamp(time()-time0).strftime(<span class="string">&quot;%M:%S:%f&quot;</span>))</span><br></pre></td></tr></table></figure>
+
+<pre><code>00:00:637867
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">plt.figure(figsize=(<span class="number">20</span>,<span class="number">5</span>))</span><br><span class="line">plt.grid()</span><br><span class="line">plt.plot(<span class="built_in">range</span>(<span class="number">1</span>,<span class="number">191</span>),cvresult1.iloc[:,<span class="number">0</span>],c=<span class="string">&quot;red&quot;</span>,label=<span class="string">&quot;train,gamma=0&quot;</span>)</span><br><span class="line">plt.plot(<span class="built_in">range</span>(<span class="number">1</span>,<span class="number">191</span>),cvresult1.iloc[:,<span class="number">2</span>],c=<span class="string">&quot;orange&quot;</span>,label=<span class="string">&quot;test,gamma=0&quot;</span>)</span><br><span class="line">plt.plot(<span class="built_in">range</span>(<span class="number">1</span>,<span class="number">191</span>),cvresult2.iloc[:,<span class="number">0</span>],c=<span class="string">&quot;green&quot;</span>,label=<span class="string">&quot;train,gamma=20&quot;</span>)</span><br><span class="line">plt.plot(<span class="built_in">range</span>(<span class="number">1</span>,<span class="number">191</span>),cvresult2.iloc[:,<span class="number">2</span>],c=<span class="string">&quot;blue&quot;</span>,label=<span class="string">&quot;test,gamma=20&quot;</span>)</span><br><span class="line">plt.legend()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+
+<p><img src="/images/xgb_11.png" alt="png" loading="lazy"></p>
+<p>可以看出调高gamma后，大幅缩小了差异，减少了过拟合情况。但是是通过降低对训练集的表现来降低过拟合。来限制学习从而提升泛化能力。</p>
+<h3 id="使用乳腺癌数据集来看看xgboost分类模型中gamma的表现"><a href="#使用乳腺癌数据集来看看xgboost分类模型中gamma的表现" class="headerlink" title="使用乳腺癌数据集来看看xgboost分类模型中gamma的表现"></a>使用乳腺癌数据集来看看xgboost分类模型中gamma的表现</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.datasets <span class="keyword">import</span> load_breast_cancer</span><br><span class="line">data2 = load_breast_cancer()</span><br><span class="line"></span><br><span class="line">x2 = data2.data</span><br><span class="line">y2 = data2.target</span><br><span class="line"></span><br><span class="line">dfull2 = xgb.DMatrix(x2,y2)</span><br><span class="line"></span><br><span class="line">param1 = &#123;<span class="string">&#x27;silent&#x27;</span>:<span class="literal">True</span>,<span class="string">&#x27;obj&#x27;</span>:<span class="string">&#x27;binary:logistic&#x27;</span>,<span class="string">&quot;gamma&quot;</span>:<span class="number">0</span>,<span class="string">&quot;nfold&quot;</span>:<span class="number">5</span></span><br><span class="line">          ,<span class="string">&quot;eval_metrics&quot;</span>:<span class="string">&quot;error&quot;</span></span><br><span class="line">         &#125;</span><br><span class="line">param2 = &#123;<span class="string">&#x27;silent&#x27;</span>:<span class="literal">True</span>,<span class="string">&#x27;obj&#x27;</span>:<span class="string">&#x27;binary:logistic&#x27;</span>,<span class="string">&quot;gamma&quot;</span>:<span class="number">2</span>,<span class="string">&quot;nfold&quot;</span>:<span class="number">5</span>&#125;</span><br><span class="line">num_round = <span class="number">100</span></span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">time0 = time()</span><br><span class="line">cvresult1 = xgb.cv(param1, dfull2, num_round,metrics=(<span class="string">&quot;error&quot;</span>))</span><br><span class="line"><span class="built_in">print</span>(datetime.datetime.fromtimestamp(time()-time0).strftime(<span class="string">&quot;%M:%S:%f&quot;</span>))</span><br></pre></td></tr></table></figure>
+
+<pre><code>00:00:158470
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">time0 = time()</span><br><span class="line">cvresult2 = xgb.cv(param2, dfull2, num_round,metrics=(<span class="string">&quot;error&quot;</span>)) </span><br><span class="line"><span class="built_in">print</span>(datetime.datetime.fromtimestamp(time()-time0).strftime(<span class="string">&quot;%M:%S:%f&quot;</span>))</span><br></pre></td></tr></table></figure>
+
+<pre><code>00:00:207306
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">plt.figure(figsize=(<span class="number">20</span>,<span class="number">5</span>))</span><br><span class="line">plt.grid()</span><br><span class="line">plt.plot(<span class="built_in">range</span>(<span class="number">1</span>,<span class="number">101</span>),cvresult1.iloc[:,<span class="number">0</span>],c=<span class="string">&quot;red&quot;</span>,label=<span class="string">&quot;train,gamma=0&quot;</span>)</span><br><span class="line">plt.plot(<span class="built_in">range</span>(<span class="number">1</span>,<span class="number">101</span>),cvresult1.iloc[:,<span class="number">2</span>],c=<span class="string">&quot;orange&quot;</span>,label=<span class="string">&quot;test,gamma=0&quot;</span>)</span><br><span class="line">plt.plot(<span class="built_in">range</span>(<span class="number">1</span>,<span class="number">101</span>),cvresult2.iloc[:,<span class="number">0</span>],c=<span class="string">&quot;green&quot;</span>,label=<span class="string">&quot;train,gamma=2&quot;</span>)</span><br><span class="line">plt.plot(<span class="built_in">range</span>(<span class="number">1</span>,<span class="number">101</span>),cvresult2.iloc[:,<span class="number">2</span>],c=<span class="string">&quot;blue&quot;</span>,label=<span class="string">&quot;test,gamma=2&quot;</span>)</span><br><span class="line">plt.legend()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+
+<p><img src="/images/xgb_12.png" alt="png" loading="lazy"></p>
+<p>发现提高gamma后不仅减少了训练集表现，也降低了测试集的表现。所以可以适当减小gamma值，使得测试集表现不变而降低训练集，使过拟合情况缓解。</p>
+<p>通过时间测试可以看出xgboost.cv的速度远远高于学习曲线，所以尽量使用cv来进行参数调节。</p>
+<h2 id="过拟合参数：剪枝参数与回归模型调参"><a href="#过拟合参数：剪枝参数与回归模型调参" class="headerlink" title="过拟合参数：剪枝参数与回归模型调参"></a>过拟合参数：剪枝参数与回归模型调参</h2><table>
+<thead>
+<tr>
+<th align="center">参数含义</th>
+<th align="center">xgboost:默认值</th>
+<th align="center">sklearn:默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">树的最大深度</td>
+<td align="center">max_depth:6</td>
+<td align="center">max_depth:6</td>
+</tr>
+<tr>
+<td align="center">每次生成树时随机抽样特征比例</td>
+<td align="center">colsample_bytree:1</td>
+<td align="center">colsample_bytree:1</td>
+</tr>
+<tr>
+<td align="center">每次生成树的一层时随机抽样比例</td>
+<td align="center">colsample_bylevel:1</td>
+<td align="center">colsample_bylevel:1</td>
+</tr>
+<tr>
+<td align="center">每次生成一个叶子节点时随机抽样特征比例</td>
+<td align="center">colsample_bynode:1</td>
+<td align="center">NONE</td>
+</tr>
+<tr>
+<td align="center">一个叶子节点上所需要的最小$h_i$类似样本权重</td>
+<td align="center">min_child_weight:1</td>
+<td align="center">min_child_weight:1</td>
+</tr>
+</tbody></table>
+<p>一般调整模型先选择n_estimators和eta，如何使用gamma和max_depth来调整过拟合情况。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">dfull = xgb.DMatrix(x,y)</span><br><span class="line"></span><br><span class="line">param1 = &#123;<span class="string">&#x27;silent&#x27;</span>:<span class="literal">True</span></span><br><span class="line">          ,<span class="string">&#x27;obj&#x27;</span>:<span class="string">&#x27;reg:linear&#x27;</span></span><br><span class="line">          ,<span class="string">&quot;subsample&quot;</span>:<span class="number">1</span> <span class="comment">#以下参数均为默认值</span></span><br><span class="line">          ,<span class="string">&quot;max_depth&quot;</span>:<span class="number">6</span></span><br><span class="line">          ,<span class="string">&quot;eta&quot;</span>:<span class="number">0.3</span></span><br><span class="line">          ,<span class="string">&quot;gamma&quot;</span>:<span class="number">0</span></span><br><span class="line">          ,<span class="string">&quot;lambda&quot;</span>:<span class="number">1</span></span><br><span class="line">          ,<span class="string">&quot;alpha&quot;</span>:<span class="number">0</span></span><br><span class="line">          ,<span class="string">&quot;colsample_bytree&quot;</span>:<span class="number">1</span></span><br><span class="line">          ,<span class="string">&quot;colsample_bylevel&quot;</span>:<span class="number">1</span></span><br><span class="line">          ,<span class="string">&quot;colsample_bynode&quot;</span>:<span class="number">1</span></span><br><span class="line">          ,<span class="string">&quot;nfold&quot;</span>:<span class="number">5</span>&#125;</span><br><span class="line">num_round = <span class="number">200</span></span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">time0 = time()</span><br><span class="line">cvresult1 = xgb.cv(param1, dfull, num_round)</span><br><span class="line"><span class="built_in">print</span>(datetime.datetime.fromtimestamp(time()-time0).strftime(<span class="string">&quot;%M:%S:%f&quot;</span>))</span><br><span class="line"></span><br><span class="line">fig,ax = plt.subplots(<span class="number">1</span>,figsize=(<span class="number">15</span>,<span class="number">8</span>))</span><br><span class="line">ax.set_ylim(top=<span class="number">5</span>)</span><br><span class="line">ax.grid()</span><br><span class="line">ax.plot(<span class="built_in">range</span>(<span class="number">1</span>,<span class="number">201</span>),cvresult1.iloc[:,<span class="number">0</span>],c=<span class="string">&quot;red&quot;</span>,label=<span class="string">&quot;train,original&quot;</span>)</span><br><span class="line">ax.plot(<span class="built_in">range</span>(<span class="number">1</span>,<span class="number">201</span>),cvresult1.iloc[:,<span class="number">2</span>],c=<span class="string">&quot;orange&quot;</span>,label=<span class="string">&quot;test,original&quot;</span>)</span><br><span class="line">ax.legend(fontsize=<span class="string">&quot;xx-large&quot;</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+<pre><code>00:00:309961
+</code></pre>
+<p><img src="/images/xgb_13.png" alt="png" loading="lazy"></p>
+<p>可以发现过拟合情况非常严重</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line">param1 = &#123;<span class="string">&#x27;silent&#x27;</span>:<span class="literal">True</span></span><br><span class="line">          ,<span class="string">&#x27;obj&#x27;</span>:<span class="string">&#x27;reg:linear&#x27;</span></span><br><span class="line">          ,<span class="string">&quot;subsample&quot;</span>:<span class="number">1</span></span><br><span class="line">          ,<span class="string">&quot;max_depth&quot;</span>:<span class="number">6</span></span><br><span class="line">          ,<span class="string">&quot;eta&quot;</span>:<span class="number">0.3</span></span><br><span class="line">          ,<span class="string">&quot;gamma&quot;</span>:<span class="number">0</span></span><br><span class="line">          ,<span class="string">&quot;lambda&quot;</span>:<span class="number">1</span></span><br><span class="line">          ,<span class="string">&quot;alpha&quot;</span>:<span class="number">0</span></span><br><span class="line">          ,<span class="string">&quot;colsample_bytree&quot;</span>:<span class="number">1</span></span><br><span class="line">          ,<span class="string">&quot;colsample_bylevel&quot;</span>:<span class="number">1</span></span><br><span class="line">          ,<span class="string">&quot;colsample_bynode&quot;</span>:<span class="number">1</span></span><br><span class="line">          ,<span class="string">&quot;nfold&quot;</span>:<span class="number">5</span>&#125; <span class="comment"># 使用默认模型进行对比</span></span><br><span class="line">num_round = <span class="number">200</span></span><br><span class="line"></span><br><span class="line">time0 = time()</span><br><span class="line">cvresult1 = xgb.cv(param1, dfull, num_round)</span><br><span class="line"><span class="built_in">print</span>(datetime.datetime.fromtimestamp(time()-time0).strftime(<span class="string">&quot;%M:%S:%f&quot;</span>))</span><br><span class="line"></span><br><span class="line">fig,ax = plt.subplots(<span class="number">1</span>,figsize=(<span class="number">15</span>,<span class="number">8</span>))</span><br><span class="line">ax.set_ylim(top=<span class="number">5</span>)</span><br><span class="line">ax.grid()</span><br><span class="line">ax.plot(<span class="built_in">range</span>(<span class="number">1</span>,<span class="number">201</span>),cvresult1.iloc[:,<span class="number">0</span>],c=<span class="string">&quot;red&quot;</span>,label=<span class="string">&quot;train,original&quot;</span>)</span><br><span class="line">ax.plot(<span class="built_in">range</span>(<span class="number">1</span>,<span class="number">201</span>),cvresult1.iloc[:,<span class="number">2</span>],c=<span class="string">&quot;orange&quot;</span>,label=<span class="string">&quot;test,original&quot;</span>)</span><br><span class="line"></span><br><span class="line">param2 = &#123;<span class="string">&#x27;silent&#x27;</span>:<span class="literal">True</span></span><br><span class="line">          ,<span class="string">&#x27;obj&#x27;</span>:<span class="string">&#x27;reg:linear&#x27;</span></span><br><span class="line">          ,<span class="string">&quot;max_depth&quot;</span>:<span class="number">2</span></span><br><span class="line">          ,<span class="string">&quot;eta&quot;</span>:<span class="number">0.05</span></span><br><span class="line">          ,<span class="string">&quot;gamma&quot;</span>:<span class="number">0</span></span><br><span class="line">          ,<span class="string">&quot;lambda&quot;</span>:<span class="number">1</span></span><br><span class="line">          ,<span class="string">&quot;alpha&quot;</span>:<span class="number">0</span></span><br><span class="line">          ,<span class="string">&quot;colsample_bytree&quot;</span>:<span class="number">1</span></span><br><span class="line">          ,<span class="string">&quot;colsample_bylevel&quot;</span>:<span class="number">0.4</span></span><br><span class="line">          ,<span class="string">&quot;colsample_bynode&quot;</span>:<span class="number">1</span></span><br><span class="line">          ,<span class="string">&quot;nfold&quot;</span>:<span class="number">5</span>&#125; <span class="comment"># 上一次调整的参数</span></span><br><span class="line"></span><br><span class="line">param3 = &#123;<span class="string">&#x27;silent&#x27;</span>:<span class="literal">True</span></span><br><span class="line">          ,<span class="string">&#x27;obj&#x27;</span>:<span class="string">&#x27;reg:linear&#x27;</span></span><br><span class="line">          ,<span class="string">&quot;subsample&quot;</span>:<span class="number">1</span></span><br><span class="line">          ,<span class="string">&quot;eta&quot;</span>:<span class="number">0.05</span></span><br><span class="line">          ,<span class="string">&quot;gamma&quot;</span>:<span class="number">20</span></span><br><span class="line">          ,<span class="string">&quot;lambda&quot;</span>:<span class="number">3.5</span></span><br><span class="line">          ,<span class="string">&quot;alpha&quot;</span>:<span class="number">0.2</span></span><br><span class="line">          ,<span class="string">&quot;max_depth&quot;</span>:<span class="number">4</span></span><br><span class="line">          ,<span class="string">&quot;colsample_bytree&quot;</span>:<span class="number">0.4</span></span><br><span class="line">          ,<span class="string">&quot;colsample_bylevel&quot;</span>:<span class="number">0.6</span></span><br><span class="line">          ,<span class="string">&quot;colsample_bynode&quot;</span>:<span class="number">1</span></span><br><span class="line">          ,<span class="string">&quot;nfold&quot;</span>:<span class="number">5</span>&#125; <span class="comment"># 这次的参数</span></span><br><span class="line"></span><br><span class="line">time0 = time()</span><br><span class="line">cvresult2 = xgb.cv(param2, dfull, num_round)</span><br><span class="line"><span class="built_in">print</span>(datetime.datetime.fromtimestamp(time()-time0).strftime(<span class="string">&quot;%M:%S:%f&quot;</span>))</span><br><span class="line"></span><br><span class="line">time0 = time()</span><br><span class="line">cvresult3 = xgb.cv(param3, dfull, num_round)</span><br><span class="line"><span class="built_in">print</span>(datetime.datetime.fromtimestamp(time()-time0).strftime(<span class="string">&quot;%M:%S:%f&quot;</span>))</span><br><span class="line"></span><br><span class="line">ax.plot(<span class="built_in">range</span>(<span class="number">1</span>,<span class="number">201</span>),cvresult2.iloc[:,<span class="number">0</span>],c=<span class="string">&quot;green&quot;</span>,label=<span class="string">&quot;train,last&quot;</span>)</span><br><span class="line">ax.plot(<span class="built_in">range</span>(<span class="number">1</span>,<span class="number">201</span>),cvresult2.iloc[:,<span class="number">2</span>],c=<span class="string">&quot;blue&quot;</span>,label=<span class="string">&quot;test,last&quot;</span>)</span><br><span class="line">ax.plot(<span class="built_in">range</span>(<span class="number">1</span>,<span class="number">201</span>),cvresult3.iloc[:,<span class="number">0</span>],c=<span class="string">&quot;gray&quot;</span>,label=<span class="string">&quot;train,this&quot;</span>)</span><br><span class="line">ax.plot(<span class="built_in">range</span>(<span class="number">1</span>,<span class="number">201</span>),cvresult3.iloc[:,<span class="number">2</span>],c=<span class="string">&quot;pink&quot;</span>,label=<span class="string">&quot;test,this&quot;</span>)</span><br><span class="line">ax.legend(fontsize=<span class="string">&quot;xx-large&quot;</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+<pre><code>00:00:342853
+00:00:196354
+00:00:297523
+</code></pre>
+<p><img src="/images/xgb_14.png" alt="png" loading="lazy"></p>
+<p>不断进行参数调节，尽量使test与train差值减少。一般从eta,gamma和max_depth来入手，如果影响很大其他参数可以不进行调整。也可以先在sklearn用学习曲线找到合适参数，依次为基准进行调参。</p>
+<h2 id="模型保存和调用"><a href="#模型保存和调用" class="headerlink" title="模型保存和调用"></a>模型保存和调用</h2><h3 id="pickle保存和调用模型"><a href="#pickle保存和调用模型" class="headerlink" title="pickle保存和调用模型"></a>pickle保存和调用模型</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pickle</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">dtrain = xgb.DMatrix(Xtrain,Ytrain)</span><br><span class="line"></span><br><span class="line"><span class="comment">#设定参数，对模型进行训练</span></span><br><span class="line">param = &#123;</span><br><span class="line">          <span class="string">&#x27;obj&#x27;</span>:<span class="string">&#x27;reg:linear&#x27;</span></span><br><span class="line">          ,<span class="string">&quot;subsample&quot;</span>:<span class="number">1</span></span><br><span class="line">          ,<span class="string">&quot;eta&quot;</span>:<span class="number">0.05</span></span><br><span class="line">          ,<span class="string">&quot;gamma&quot;</span>:<span class="number">20</span></span><br><span class="line">          ,<span class="string">&quot;lambda&quot;</span>:<span class="number">3.5</span></span><br><span class="line">          ,<span class="string">&quot;alpha&quot;</span>:<span class="number">0.2</span></span><br><span class="line">          ,<span class="string">&quot;max_depth&quot;</span>:<span class="number">4</span></span><br><span class="line">          ,<span class="string">&quot;colsample_bytree&quot;</span>:<span class="number">0.4</span></span><br><span class="line">          ,<span class="string">&quot;colsample_bylevel&quot;</span>:<span class="number">0.6</span></span><br><span class="line">          ,<span class="string">&quot;colsample_bynode&quot;</span>:<span class="number">1</span>&#125;</span><br><span class="line">num_round = <span class="number">180</span></span><br><span class="line"></span><br><span class="line">bst = xgb.train(param, dtrain, num_round)</span><br></pre></td></tr></table></figure>
+
+<pre><code>[01:54:02] WARNING: C:/Users/administrator/workspace/xgboost-win64_release_1.6.0/src/learner.cc:627: 
+Parameters: &#123; &quot;obj&quot; &#125; might not be used.
+
+  This could be a false alarm, with some parameters getting used by language bindings but
+  then being mistakenly passed down to XGBoost core, or some parameter actually being used
+  but getting flagged wrongly here. Please open an issue if you find any such cases.
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#保存模型</span></span><br><span class="line">pickle.dump(bst, <span class="built_in">open</span>(<span class="string">&quot;xgboostonboston.dat&quot;</span>,<span class="string">&quot;wb&quot;</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment">#注意，open中我们往往使用w或者r作为读取的模式，但其实w与r只能用于文本文件 - txt</span></span><br><span class="line"><span class="comment">#当我们希望导入的不是文本文件，而是模型本身的时候，我们使用&quot;wb&quot;和&quot;rb&quot;作为读取的模式</span></span><br><span class="line"><span class="comment">#其中wb表示以二进制写入，rb表示以二进制读入，使用open进行保存的这个文件中是一个可以进行读取或者调用的模型</span></span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#看看模型被保存到了哪里</span></span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">sys.path</span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>[&#39;C:\\Users\\W_pl\\Desktop\\code&#39;,
+ &#39;d:\\python39.zip&#39;,
+ &#39;d:\\DLLs&#39;,
+ &#39;d:\\lib&#39;,
+ &#39;D:\\&#39;,
+ &#39;&#39;,
+ &#39;D:\\lib\\site-packages&#39;,
+ &#39;D:\\lib\\site-packages\\win32&#39;,
+ &#39;D:\\lib\\site-packages\\win32\\lib&#39;,
+ &#39;D:\\lib\\site-packages\\Pythonwin&#39;]
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#重新打开jupyter lab</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> sklearn.datasets <span class="keyword">import</span> load_boston</span><br><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split <span class="keyword">as</span> TTS</span><br><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> mean_squared_error <span class="keyword">as</span> MSE</span><br><span class="line"><span class="keyword">import</span> pickle</span><br><span class="line"><span class="keyword">import</span> xgboost <span class="keyword">as</span> xgb</span><br><span class="line"></span><br><span class="line">data = load_boston()</span><br><span class="line"></span><br><span class="line">X = data.data</span><br><span class="line">y = data.target</span><br><span class="line"></span><br><span class="line">Xtrain,Xtest,Ytrain,Ytest = TTS(X,y,test_size=<span class="number">0.3</span>,random_state=<span class="number">420</span>)</span><br></pre></td></tr></table></figure>
+
+<pre><code>D:\lib\site-packages\sklearn\utils\deprecation.py:87: FutureWarning: Function load_boston is deprecated; `load_boston` is deprecated in 1.0 and will be removed in 1.2.
+
+    The Boston housing prices dataset has an ethical problem. You can refer to
+    the documentation of this function for further details.
+
+    The scikit-learn maintainers therefore strongly discourage the use of this
+    dataset unless the purpose of the code is to study and educate about
+    ethical issues in data science and machine learning.
+
+    In this special case, you can fetch the dataset from the original
+    source::
+
+        import pandas as pd
+        import numpy as np
+
+        data_url = &quot;http://lib.stat.cmu.edu/datasets/boston&quot;
+        raw_df = pd.read_csv(data_url, sep=&quot;\s+&quot;, skiprows=22, header=None)
+        data = np.hstack([raw_df.values[::2, :], raw_df.values[1::2, :2]])
+        target = raw_df.values[1::2, 2]
+
+    Alternative datasets include the California housing dataset (i.e.
+    :func:`~sklearn.datasets.fetch_california_housing`) and the Ames housing
+    dataset. You can load the datasets as follows::
+
+        from sklearn.datasets import fetch_california_housing
+        housing = fetch_california_housing()
+
+    for the California housing dataset and::
+
+        from sklearn.datasets import fetch_openml
+        housing = fetch_openml(name=&quot;house_prices&quot;, as_frame=True)
+
+    for the Ames housing dataset.
+  warnings.warn(msg, category=FutureWarning)
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#注意，如果我们保存的模型是xgboost库中建立的模型，则导入的数据类型也必须是xgboost库中的数据类型</span></span><br><span class="line">dtest = xgb.DMatrix(Xtest,Ytest)</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#导入模型</span></span><br><span class="line">loaded_model = pickle.load(<span class="built_in">open</span>(<span class="string">&quot;xgboostonboston.dat&quot;</span>, <span class="string">&quot;rb&quot;</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Loaded model from: xgboostonboston.dat&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<pre><code>Loaded model from: xgboostonboston.dat
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#做预测，直接调用接口predict</span></span><br><span class="line">ypreds = loaded_model.predict(dtest)</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ypreds</span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>array([ 9.278189 , 22.734112 , 29.49379  , 12.983151 ,  9.501983 ,
+       20.643223 , 15.942372 , 15.831039 , 15.698411 , 15.967683 ,
+       21.101307 , 35.83475  , 20.486403 , 29.231373 , 20.785269 ,
+       12.0639305, 17.634281 , 26.05238  , 25.247683 , 23.5034   ,
+       18.00751  , 16.483337 , 25.402018 , 22.421213 , 20.117733 ,
+       16.29775  , 21.58729  , 25.936457 , 23.091265 , 16.585093 ,
+       35.39749  , 20.128454 , 20.370457 , 23.711693 , 23.2132   ,
+       24.522055 , 16.185257 , 23.857044 , 18.04799  , 34.886368 ,
+       17.500023 , 21.3877   , 33.37537  , 18.835125 , 15.2021055,
+       28.557238 , 42.054836 , 16.839176 , 10.032375 , 37.126007 ,
+       26.214668 , 21.136717 , 20.56424  , 47.07938  , 27.928053 ,
+       25.919254 , 18.91586  , 20.73725  , 17.170164 , 18.296001 ,
+       15.074967 , 23.753801 , 19.82896  , 31.379152 , 29.385721 ,
+       20.15055  , 20.949522 , 17.336159 , 22.490997 , 16.978098 ,
+       28.754507 , 40.5415   , 30.079725 , 22.954508 , 20.131071 ,
+       23.611767 , 39.112865 , 27.09449  , 21.863207 , 20.840895 ,
+       18.106676 , 45.172653 , 23.532963 ,  9.185723 , 26.472696 ,
+       23.175745 , 17.478828 , 20.660913 , 15.487839 , 13.609945 ,
+       21.267662 , 19.99994  , 39.685055 , 32.446346 , 23.493828 ,
+       11.488627 , 15.72672  , 21.053246 ,  9.769615 , 11.224182 ,
+       32.408775 , 16.89148  , 24.925585 , 24.327538 , 33.56309  ,
+       41.950325 , 20.534348 ,  9.128101 , 22.954508 , 14.764961 ,
+       44.470955 , 20.587046 , 22.605795 , 24.460056 , 19.11823  ,
+       28.227682 , 23.851608 , 19.594564 , 42.40337  , 18.06053  ,
+       24.152496 , 25.261152 , 16.51031  , 18.09877  , 15.671002 ,
+       22.91     , 32.17411  , 10.821065 , 21.38708  , 19.205914 ,
+       15.028279 , 19.736324 ,  9.437382 , 28.889278 , 29.728348 ,
+       20.992556 , 18.890804 , 22.11941  , 10.96947  , 17.206701 ,
+       41.021526 , 17.42233  , 23.244827 , 20.014555 , 32.103203 ,
+       19.674358 , 11.808359 , 38.164032 , 24.953072 , 23.238205 ,
+       16.352705 , 24.270111 ], dtype=float32)
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> mean_squared_error <span class="keyword">as</span> MSE, r2_score</span><br><span class="line">MSE(Ytest,ypreds)</span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>9.178375452806907
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">r2_score(Ytest,ypreds)</span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>0.9013649408758324
+</code></pre>
+<h3 id="使用joblib保存和调用模型"><a href="#使用joblib保存和调用模型" class="headerlink" title="使用joblib保存和调用模型"></a>使用joblib保存和调用模型</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> joblib</span><br><span class="line"></span><br><span class="line">bst = xgb.train(param, dtrain, num_round)</span><br><span class="line"><span class="comment">#同样可以看看模型被保存到了哪里</span></span><br><span class="line">joblib.dump(bst,<span class="string">&quot;xgboost-boston.dat&quot;</span>)</span><br></pre></td></tr></table></figure>
+<pre><code>[&#39;xgboost-boston.dat&#39;]
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 读取模型</span></span><br><span class="line">loaded_model = joblib.load(<span class="string">&quot;xgboost-boston.dat&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dtest = xgb.DMatrix(Xtest,Ytest)</span><br><span class="line">ypreds = loaded_model.predict(dtest)</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ypreds</span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>array([ 9.278189 , 22.734112 , 29.49379  , 12.983151 ,  9.501983 ,
+       20.643223 , 15.942372 , 15.831039 , 15.698411 , 15.967683 ,
+       21.101307 , 35.83475  , 20.486403 , 29.231373 , 20.785269 ,
+       12.0639305, 17.634281 , 26.05238  , 25.247683 , 23.5034   ,
+       18.00751  , 16.483337 , 25.402018 , 22.421213 , 20.117733 ,
+       16.29775  , 21.58729  , 25.936457 , 23.091265 , 16.585093 ,
+       35.39749  , 20.128454 , 20.370457 , 23.711693 , 23.2132   ,
+       24.522055 , 16.185257 , 23.857044 , 18.04799  , 34.886368 ,
+       17.500023 , 21.3877   , 33.37537  , 18.835125 , 15.2021055,
+       28.557238 , 42.054836 , 16.839176 , 10.032375 , 37.126007 ,
+       26.214668 , 21.136717 , 20.56424  , 47.07938  , 27.928053 ,
+       25.919254 , 18.91586  , 20.73725  , 17.170164 , 18.296001 ,
+       15.074967 , 23.753801 , 19.82896  , 31.379152 , 29.385721 ,
+       20.15055  , 20.949522 , 17.336159 , 22.490997 , 16.978098 ,
+       28.754507 , 40.5415   , 30.079725 , 22.954508 , 20.131071 ,
+       23.611767 , 39.112865 , 27.09449  , 21.863207 , 20.840895 ,
+       18.106676 , 45.172653 , 23.532963 ,  9.185723 , 26.472696 ,
+       23.175745 , 17.478828 , 20.660913 , 15.487839 , 13.609945 ,
+       21.267662 , 19.99994  , 39.685055 , 32.446346 , 23.493828 ,
+       11.488627 , 15.72672  , 21.053246 ,  9.769615 , 11.224182 ,
+       32.408775 , 16.89148  , 24.925585 , 24.327538 , 33.56309  ,
+       41.950325 , 20.534348 ,  9.128101 , 22.954508 , 14.764961 ,
+       44.470955 , 20.587046 , 22.605795 , 24.460056 , 19.11823  ,
+       28.227682 , 23.851608 , 19.594564 , 42.40337  , 18.06053  ,
+       24.152496 , 25.261152 , 16.51031  , 18.09877  , 15.671002 ,
+       22.91     , 32.17411  , 10.821065 , 21.38708  , 19.205914 ,
+       15.028279 , 19.736324 ,  9.437382 , 28.889278 , 29.728348 ,
+       20.992556 , 18.890804 , 22.11941  , 10.96947  , 17.206701 ,
+       41.021526 , 17.42233  , 23.244827 , 20.014555 , 32.103203 ,
+       19.674358 , 11.808359 , 38.164032 , 24.953072 , 23.238205 ,
+       16.352705 , 24.270111 ], dtype=float32)
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> mean_squared_error <span class="keyword">as</span> MSE, r2_score</span><br><span class="line">MSE(Ytest,ypreds)</span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>9.178375452806907
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">r2_score(Ytest,ypreds)</span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>0.9013649408758324
+</code></pre>
+<h2 id="分类案例：xgb中样本不均衡问题"><a href="#分类案例：xgb中样本不均衡问题" class="headerlink" title="分类案例：xgb中样本不均衡问题"></a>分类案例：xgb中样本不均衡问题</h2><p>使用scale_pos_weight参数来控制样本平衡，默认值为1。表示为正样本处以负样本。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> xgboost <span class="keyword">as</span> xgb</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">from</span> xgboost <span class="keyword">import</span> XGBClassifier <span class="keyword">as</span> XGBC</span><br><span class="line"><span class="keyword">from</span> sklearn.datasets <span class="keyword">import</span> make_blobs <span class="comment">#自创数据集</span></span><br><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split <span class="keyword">as</span> TTS</span><br><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> confusion_matrix <span class="keyword">as</span> cm, recall_score <span class="keyword">as</span> recall, roc_auc_score <span class="keyword">as</span> auc</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">class_1 = <span class="number">500</span> <span class="comment">#类别1有500个样本</span></span><br><span class="line">class_2 = <span class="number">50</span> <span class="comment">#类别2只有50个</span></span><br><span class="line">centers = [[<span class="number">0.0</span>, <span class="number">0.0</span>], [<span class="number">2.0</span>, <span class="number">2.0</span>]] <span class="comment">#设定两个类别的中心</span></span><br><span class="line">clusters_std = [<span class="number">1.5</span>, <span class="number">0.5</span>] <span class="comment">#设定两个类别的方差，通常来说，样本量比较大的类别会更加松散</span></span><br><span class="line">X, y = make_blobs(n_samples=[class_1, class_2],</span><br><span class="line">                  centers=centers,</span><br><span class="line">                  cluster_std=clusters_std,</span><br><span class="line">                  random_state=<span class="number">0</span>, shuffle=<span class="literal">False</span>)</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Xtrain, Xtest, Ytrain, Ytest = TTS(X,y,test_size=<span class="number">0.3</span>,random_state=<span class="number">420</span>)</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#在sklearn下建模#</span></span><br><span class="line"></span><br><span class="line">clf = XGBC().fit(Xtrain,Ytrain)</span><br><span class="line">ypred = clf.predict(Xtest)</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clf.score(Xtest,Ytest) <span class="comment">#默认模型评估指标 - 准确率</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>0.9272727272727272
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cm(Ytest,ypred,labels=[<span class="number">1</span>,<span class="number">0</span>]) <span class="comment">#少数类写在labels前面 混淆矩阵</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>array([[  9,   4],
+       [  8, 144]], dtype=int64)
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">recall(Ytest,ypred) <span class="comment">#召回率</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>0.6923076923076923
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">auc(Ytest,clf.predict_proba(Xtest)[:,<span class="number">1</span>])</span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>0.9701417004048585
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#负/正样本比例</span></span><br><span class="line">clf_ = XGBC(scale_pos_weight=<span class="number">10</span>).fit(Xtrain,Ytrain) <span class="comment">#使用参数 值为：大数/小数</span></span><br><span class="line">ypred_ = clf_.predict(Xtest)</span><br><span class="line">clf_.score(Xtest,Ytest)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>0.9696356275303644
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cm(Ytest,ypred_,labels=[<span class="number">1</span>,<span class="number">0</span>])</span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>array([[ 10,   3],
+       [  8, 144]], dtype=int64)
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">recall(Ytest,ypred_)</span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>0.7692307692307693
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">auc(Ytest,clf_.predict_proba(Xtest)[:,<span class="number">1</span>])</span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>0.9696356275303644
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#随着样本权重逐渐增加，模型的recall,auc和准确率如何变化？</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> [<span class="number">1</span>,<span class="number">5</span>,<span class="number">10</span>,<span class="number">20</span>,<span class="number">30</span>]:</span><br><span class="line">    clf_ = XGBC(scale_pos_weight=i).fit(Xtrain,Ytrain)</span><br><span class="line">    ypred_ = clf_.predict(Xtest)</span><br><span class="line">    <span class="built_in">print</span>(i)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;\tAccuracy:&#123;&#125;&quot;</span>.<span class="built_in">format</span>(clf_.score(Xtest,Ytest)))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;\tRecall:&#123;&#125;&quot;</span>.<span class="built_in">format</span>(recall(Ytest,ypred_)))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;\tAUC:&#123;&#125;&quot;</span>.<span class="built_in">format</span>(auc(Ytest,clf_.predict_proba(Xtest)[:,<span class="number">1</span>])))</span><br></pre></td></tr></table></figure>
+
+<pre><code>1
+    Accuracy:0.9272727272727272
+    Recall:0.6923076923076923
+    AUC:0.9701417004048585
+5
+    Accuracy:0.9393939393939394
+    Recall:0.8461538461538461
+    AUC:0.9660931174089069
+10
+    Accuracy:0.9333333333333333
+    Recall:0.7692307692307693
+    AUC:0.9696356275303644
+20
+    Accuracy:0.9333333333333333
+    Recall:0.7692307692307693
+    AUC:0.9686234817813765
+30
+    Accuracy:0.9393939393939394
+    Recall:0.8461538461538461
+    AUC:0.9701417004048583
+</code></pre>
+<p>发现30时效果跟好，所以可以选择30为参数值。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用xgboost</span></span><br><span class="line">dtrain = xgb.DMatrix(Xtrain,Ytrain)</span><br><span class="line">dtest = xgb.DMatrix(Xtest,Ytest)</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">param = &#123;<span class="string">&#x27;objective&#x27;</span>:<span class="string">&#x27;binary:logistic&#x27;</span>,<span class="string">&quot;eta&quot;</span>:<span class="number">0.1</span>,<span class="string">&quot;scale_pos_weight&quot;</span>:<span class="number">1</span>&#125;</span><br><span class="line">num_round = <span class="number">100</span></span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bst = xgb.train(param, dtrain, num_round)</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">preds = bst.predict(dtest)</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">preds <span class="comment">#查看返回值，返回的为概率</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>array([0.00110357, 0.00761518, 0.00110357, 0.00110357, 0.93531454,
+       0.00466839, 0.00110357, 0.00110357, 0.00110357, 0.00110357,
+       0.00110357, 0.00410493, 0.00454478, 0.00571528, 0.00751026,
+       0.00110357, 0.00110357, 0.00110357, 0.00110357, 0.00110357,
+       0.00110357, 0.00110357, 0.00110357, 0.00110357, 0.00110357,
+       0.00712637, 0.00110357, 0.00110357, 0.00110357, 0.00110357,
+       0.00110357, 0.00110357, 0.00110357, 0.00793251, 0.00466839,
+       0.00110357, 0.00339395, 0.00657186, 0.00110357, 0.00457053,
+       0.00571528, 0.0026763 , 0.00110357, 0.00110357, 0.00110357,
+       0.00884932, 0.00712637, 0.00110357, 0.00712637, 0.00466839,
+       0.00110357, 0.00110357, 0.00712637, 0.00110357, 0.00110357,
+       0.00110357, 0.00110357, 0.63748044, 0.00110357, 0.00793251,
+       0.00110357, 0.00451971, 0.00644181, 0.00110357, 0.00110357,
+       0.00110357, 0.00110357, 0.00751026, 0.00712637, 0.00110357,
+       0.00866458, 0.00110357, 0.00110357, 0.00110357, 0.91610426,
+       0.00110357, 0.00110357, 0.89246494, 0.0026763 , 0.00501714,
+       0.00761518, 0.00884932, 0.00339395, 0.00110357, 0.93531454,
+       0.00110357, 0.00110357, 0.00110357, 0.82530665, 0.00751026,
+       0.00110357, 0.35174078, 0.00110357, 0.00110357, 0.70393246,
+       0.00110357, 0.76804197, 0.00110357, 0.00110357, 0.00110357,
+       0.00110357, 0.96656513, 0.00110357, 0.00571528, 0.25400913,
+       0.00110357, 0.00110357, 0.00110357, 0.00110357, 0.00457053,
+       0.00110357, 0.00110357, 0.00110357, 0.89246494, 0.00110357,
+       0.9518535 , 0.0026763 , 0.00712637, 0.00110357, 0.00501714,
+       0.00110357, 0.00110357, 0.00571528, 0.00110357, 0.00110357,
+       0.00712637, 0.00110357, 0.00110357, 0.00712637, 0.00110357,
+       0.25136763, 0.00110357, 0.00110357, 0.00110357, 0.00110357,
+       0.00110357, 0.8904051 , 0.3876418 , 0.00110357, 0.00457053,
+       0.00657186, 0.9366597 , 0.00866458, 0.00110357, 0.00501714,
+       0.00501714, 0.00110357, 0.00110357, 0.00368543, 0.00501714,
+       0.9830577 , 0.00110357, 0.00644181, 0.00110357, 0.00571528,
+       0.00110357, 0.00110357, 0.00110357, 0.00110357, 0.00466839,
+       0.00110357, 0.00110357, 0.92388713, 0.90231985, 0.80084217],
+      dtype=float32)
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ypred = preds.copy() <span class="comment">#保留原值</span></span><br><span class="line">ypred[preds &gt; <span class="number">0.5</span>] = <span class="number">1</span> <span class="comment">#设定阈值</span></span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ypred</span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>array([0.00110357, 0.00761518, 0.00110357, 0.00110357, 1.        ,
+       0.00466839, 0.00110357, 0.00110357, 0.00110357, 0.00110357,
+       0.00110357, 0.00410493, 0.00454478, 0.00571528, 0.00751026,
+       0.00110357, 0.00110357, 0.00110357, 0.00110357, 0.00110357,
+       0.00110357, 0.00110357, 0.00110357, 0.00110357, 0.00110357,
+       0.00712637, 0.00110357, 0.00110357, 0.00110357, 0.00110357,
+       0.00110357, 0.00110357, 0.00110357, 0.00793251, 0.00466839,
+       0.00110357, 0.00339395, 0.00657186, 0.00110357, 0.00457053,
+       0.00571528, 0.0026763 , 0.00110357, 0.00110357, 0.00110357,
+       0.00884932, 0.00712637, 0.00110357, 0.00712637, 0.00466839,
+       0.00110357, 0.00110357, 0.00712637, 0.00110357, 0.00110357,
+       0.00110357, 0.00110357, 1.        , 0.00110357, 0.00793251,
+       0.00110357, 0.00451971, 0.00644181, 0.00110357, 0.00110357,
+       0.00110357, 0.00110357, 0.00751026, 0.00712637, 0.00110357,
+       0.00866458, 0.00110357, 0.00110357, 0.00110357, 1.        ,
+       0.00110357, 0.00110357, 1.        , 0.0026763 , 0.00501714,
+       0.00761518, 0.00884932, 0.00339395, 0.00110357, 1.        ,
+       0.00110357, 0.00110357, 0.00110357, 1.        , 0.00751026,
+       0.00110357, 0.35174078, 0.00110357, 0.00110357, 1.        ,
+       0.00110357, 1.        , 0.00110357, 0.00110357, 0.00110357,
+       0.00110357, 1.        , 0.00110357, 0.00571528, 0.25400913,
+       0.00110357, 0.00110357, 0.00110357, 0.00110357, 0.00457053,
+       0.00110357, 0.00110357, 0.00110357, 1.        , 0.00110357,
+       1.        , 0.0026763 , 0.00712637, 0.00110357, 0.00501714,
+       0.00110357, 0.00110357, 0.00571528, 0.00110357, 0.00110357,
+       0.00712637, 0.00110357, 0.00110357, 0.00712637, 0.00110357,
+       0.25136763, 0.00110357, 0.00110357, 0.00110357, 0.00110357,
+       0.00110357, 1.        , 0.3876418 , 0.00110357, 0.00457053,
+       0.00657186, 1.        , 0.00866458, 0.00110357, 0.00501714,
+       0.00501714, 0.00110357, 0.00110357, 0.00368543, 0.00501714,
+       1.        , 0.00110357, 0.00644181, 0.00110357, 0.00571528,
+       0.00110357, 0.00110357, 0.00110357, 0.00110357, 0.00466839,
+       0.00110357, 0.00110357, 1.        , 1.        , 1.        ],
+      dtype=float32)
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ypred[ypred != <span class="number">1</span>] = <span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ypred</span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>array([0., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+       0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+       0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+       0., 0., 0., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+       0., 0., 0., 0., 0., 0., 1., 0., 0., 1., 0., 0., 0., 0., 0., 0., 1.,
+       0., 0., 0., 1., 0., 0., 0., 0., 0., 1., 0., 1., 0., 0., 0., 0., 1.,
+       0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 1., 0., 1., 0., 0., 0.,
+       0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+       1., 0., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0., 0., 1., 0., 0.,
+       0., 0., 0., 0., 0., 0., 0., 0., 0., 1., 1., 1.], dtype=float32)
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#写明参数</span></span><br><span class="line">scale_pos_weight = [<span class="number">1</span>,<span class="number">5</span>,<span class="number">10</span>]</span><br><span class="line">names = [<span class="string">&quot;negative vs positive: 1&quot;</span></span><br><span class="line">         ,<span class="string">&quot;negative vs positive: 5&quot;</span></span><br><span class="line">         ,<span class="string">&quot;negative vs positive: 10&quot;</span>]</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> accuracy_score <span class="keyword">as</span> accuracy, recall_score <span class="keyword">as</span> recall, roc_auc_score <span class="keyword">as</span> auc</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> name,i <span class="keyword">in</span> <span class="built_in">zip</span>(names,scale_pos_weight):</span><br><span class="line">    param = &#123;<span class="string">&#x27;objective&#x27;</span>:<span class="string">&#x27;binary:logistic&#x27;</span></span><br><span class="line">            ,<span class="string">&quot;eta&quot;</span>:<span class="number">0.1</span>,<span class="string">&quot;scale_pos_weight&quot;</span>:i&#125;</span><br><span class="line">    num_round = <span class="number">100</span></span><br><span class="line">    clf = xgb.train(param, dtrain, num_round)</span><br><span class="line">    preds = clf.predict(dtest)</span><br><span class="line">    ypred = preds.copy()</span><br><span class="line">    ypred[preds &gt; <span class="number">0.5</span>] = <span class="number">1</span></span><br><span class="line">    ypred[ypred != <span class="number">1</span>] = <span class="number">0</span></span><br><span class="line">    <span class="built_in">print</span>(name)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;\tAccuracy:&#123;&#125;&quot;</span>.<span class="built_in">format</span>(accuracy(Ytest,ypred)))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;\tRecall:&#123;&#125;&quot;</span>.<span class="built_in">format</span>(recall(Ytest,ypred)))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;\tAUC:&#123;&#125;&quot;</span>.<span class="built_in">format</span>(auc(Ytest,preds)))</span><br></pre></td></tr></table></figure>
+
+<pre><code>negative vs positive: 1
+    Accuracy:0.9272727272727272
+    Recall:0.6923076923076923
+    AUC:0.9741902834008097
+negative vs positive: 5
+    Accuracy:0.9393939393939394
+    Recall:0.8461538461538461
+    AUC:0.9635627530364372
+negative vs positive: 10
+    Accuracy:0.9515151515151515
+    Recall:1.0
+    AUC:0.9665991902834008
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#当然我们也可以尝试不同的阈值</span></span><br><span class="line"><span class="keyword">for</span> name,i <span class="keyword">in</span> <span class="built_in">zip</span>(names,scale_pos_weight):</span><br><span class="line">    <span class="keyword">for</span> thres <span class="keyword">in</span> [<span class="number">0.3</span>,<span class="number">0.5</span>,<span class="number">0.7</span>,<span class="number">0.9</span>]:</span><br><span class="line">        param= &#123;<span class="string">&#x27;objective&#x27;</span>:<span class="string">&#x27;binary:logistic&#x27;</span></span><br><span class="line">                ,<span class="string">&quot;eta&quot;</span>:<span class="number">0.1</span>,<span class="string">&quot;scale_pos_weight&quot;</span>:i&#125;</span><br><span class="line">        clf = xgb.train(param, dtrain, num_round)</span><br><span class="line">        preds = clf.predict(dtest)</span><br><span class="line">        ypred = preds.copy()</span><br><span class="line">        ypred[preds &gt; thres] = <span class="number">1</span></span><br><span class="line">        ypred[ypred != <span class="number">1</span>] = <span class="number">0</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;&#123;&#125;,thresholds:&#123;&#125;&quot;</span>.<span class="built_in">format</span>(name,thres))</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;\tAccuracy:&#123;&#125;&quot;</span>.<span class="built_in">format</span>(accuracy(Ytest,ypred)))</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;\tRecall:&#123;&#125;&quot;</span>.<span class="built_in">format</span>(recall(Ytest,ypred)))</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;\tAUC:&#123;&#125;&quot;</span>.<span class="built_in">format</span>(auc(Ytest,preds)))</span><br></pre></td></tr></table></figure>
+
+<pre><code>negative vs positive: 1,thresholds:0.3
+    Accuracy:0.9393939393939394
+    Recall:0.8461538461538461
+    AUC:0.9706477732793521
+negative vs positive: 1,thresholds:0.5
+    Accuracy:0.9272727272727272
+    Recall:0.6923076923076923
+    AUC:0.9706477732793521
+negative vs positive: 1,thresholds:0.7
+    Accuracy:0.9212121212121213
+    Recall:0.6153846153846154
+    AUC:0.9706477732793521
+negative vs positive: 1,thresholds:0.9
+    Accuracy:0.9333333333333333
+    Recall:0.5384615384615384
+    AUC:0.9706477732793521
+negative vs positive: 5,thresholds:0.3
+    Accuracy:0.9515151515151515
+    Recall:1.0
+    AUC:0.9660931174089069
+negative vs positive: 5,thresholds:0.5
+    Accuracy:0.9393939393939394
+    Recall:0.8461538461538461
+    AUC:0.9660931174089069
+negative vs positive: 5,thresholds:0.7
+    Accuracy:0.9272727272727272
+    Recall:0.6923076923076923
+    AUC:0.9660931174089069
+negative vs positive: 5,thresholds:0.9
+    Accuracy:0.9212121212121213
+    Recall:0.6153846153846154
+    AUC:0.9660931174089069
+negative vs positive: 10,thresholds:0.3
+    Accuracy:0.9515151515151515
+    Recall:1.0
+    AUC:0.9660931174089069
+negative vs positive: 10,thresholds:0.5
+    Accuracy:0.9393939393939394
+    Recall:0.8461538461538461
+    AUC:0.9660931174089069
+negative vs positive: 10,thresholds:0.7
+    Accuracy:0.9272727272727272
+    Recall:0.6923076923076923
+    AUC:0.9660931174089069
+negative vs positive: 10,thresholds:0.9
+    Accuracy:0.9212121212121213
+    Recall:0.6153846153846154
+    AUC:0.9660931174089069
+</code></pre>
+</div></section><ul class="post-copyright"><li class="post-copyright-author"><strong>Post author: </strong>w_pl</li><li class="post-copyright-link"><strong>Post link: </strong><a href="https://wplll.github.io/2022/10/30/XGBoost/" title="XGBoost">https://wplll.github.io/2022/10/30/XGBoost/</a></li><li class="post-copyright-license"><strong>Copyright Notice: </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/deed.zh" target="_blank" rel="noopener" title="CC ZERO 1.0 "><span class="icon iconify" data-icon="ri:creative-commons-line"></span><span class="icon iconify" data-icon="ri:creative-commons-zero-line"></span></a> unless otherwise stated.</li></ul></article><div class="post-nav"><div class="post-nav-item"></div><div class="post-nav-item"><a class="post-nav-next" href="/2022/10/25/%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/" rel="next" title="搭建一个自己的网站"><span class="post-nav-text">搭建一个自己的网站</span><span class="icon iconify" data-icon="ri:arrow-right-s-line"></span></a></div></div></div><div class="hty-card" id="comment"></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2019 – 2022 </span><span class="with-love" id="animate"><span class="icon iconify" data-icon="ri:cloud-line"></span></span><span class="author"> w_pl</span></div><div class="powered"><span>Powered by <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> v5.4.2</span><span class="footer-separator">|</span><span>Theme - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.10.9</span></div><div class="live-time"><span>本博客已运行</span><span id="display_live_time"></span><span class="moe-text">(●'◡'●)</span><script>function blog_live_time() {
+  setTimeout(blog_live_time, 1000);
+  const start = new Date('2022-05-26T00:00:00');
+  const now = new Date();
+  const timeDiff = (now.getTime() - start.getTime());
+  const msPerMinute = 60 * 1000;
+  const msPerHour = 60 * msPerMinute;
+  const msPerDay = 24 * msPerHour;
+  const passDay = Math.floor(timeDiff / msPerDay);
+  const passHour = Math.floor((timeDiff % msPerDay) / 60 / 60 / 1000);
+  const passMinute = Math.floor((timeDiff % msPerHour) / 60 / 1000);
+  const passSecond = Math.floor((timeDiff % msPerMinute) / 1000);
+  display_live_time.innerHTML = ` ${passDay} Days ${passHour} Hours ${passMinute} Minutes ${passSecond} Seconds`;
+}
+blog_live_time();
+</script></div><div class="footer-support"><span>本网站由</span><a class="footer-support-logo" href="https://www.upyun.com/?utm_source=lianmeng&amp;utm_medium=referral" target="blank" title="又拍云"><img height="30" src="https://cdn.jsdelivr.net/gh/YunYouJun/cdn/img/logo/upyun-logo.png" alt="又拍云"></a><span>提供 CDN 加速</span></div></footer></div><a class="hty-icon-button" id="back-to-top" aria-label="back-to-top" href="#"><span class="icon iconify" data-icon="ri:arrow-up-s-line"></span><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a><script>function initMourn() {
+  const date = new Date();
+  const today = (date.getMonth() + 1) + "-" + date.getDate()
+  const mourn_days = ["4-4","9-18"]
+  if (mourn_days.includes(today)) {
+    document.documentElement.style.filter = "grayscale(1)";
+  }
+}
+initMourn();</script></body></html>
