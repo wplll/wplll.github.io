@@ -1,0 +1,234 @@
+<!DOCTYPE html><html lang="zh-Hans"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="w_pl"><meta name="copyright" content="w_pl"><meta name="generator" content="Hexo 5.4.2"><meta name="theme" content="hexo-theme-yun"><title>ARIMA | wpl'web</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/star-markdown-css@0.4.1/dist/yun/yun-markdown.min.css"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/prism-theme-vars/base.css"><script src="https://fastly.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>function initScrollReveal() {
+  [".post-card",".markdown-body img"].forEach((target)=> {
+    ScrollReveal().reveal(target);
+  })
+}
+document.addEventListener("DOMContentLoaded", initScrollReveal);
+document.addEventListener("pjax:success", initScrollReveal);
+</script><link rel="stylesheet" type="text/css" href="https://fastly.jsdelivr.net/npm/katex@latest/dist/katex.min.css"><script defer src="https://fastly.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script><link rel="stylesheet" type="text/css" href="https://fastly.jsdelivr.net/npm/katex@latest/dist/contrib/copy-tex.min.css"><script defer src="https://fastly.jsdelivr.net/npm/katex@latest/dist/contrib/copy-tex.min.js"></script><script defer src="https://fastly.jsdelivr.net/npm/katex@latest/dist/contrib/auto-render.min.js"></script><script type="module">import { renderKatex } from '/js/utils.js'
+document.addEventListener("DOMContentLoaded", () => {
+  renderKatex({
+    ...{},
+    ...true?.options,
+  });
+});</script><link rel="icon" type="image/svg+xml" href="/yun.svg"><link rel="mask-icon" href="/yun.svg" color="#0078E7"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="preconnect" href="https://fastly.jsdelivr.net/npm/" crossorigin><script id="yun-config">
+    window.Yun = {}
+    window.CONFIG = {"hostname":"wplll.github.io","root":"/","title":"wpl'web","version":"1.10.9","mode":"time","copycode":true,"page":{"isPost":true},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}.","hits":"${hits} results found","hits_time":"${hits} results found in ${time} ms"},"anonymous_image":"https://cdn.yunyoujun.cn/img/avatar/none.jpg","say":{"api":"https://el-bot-api.vercel.app/api/words/young"},"fireworks":{"colors":null},"vendors":{"host":"https://fastly.jsdelivr.net/npm/","darken":"https://fastly.jsdelivr.net/npm/darken@1.5.0"}};
+  </script><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script src="/js/hexo-theme-yun.js" type="module"></script><meta name="description" content="ARIMA模型（英语：Autoregressive Integrated Moving Average model），差分整合移动平均自回归模型，又称整合移动平均自回归模型（移动也可称作滑动），是时间序列预测分析方法之一。所以随机生成一个时序数据来体验一下这个模型，如果感觉数据眼熟纯属巧合。 123456789101112from statsmodels.tsa.arima.model impor">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ARIMA">
+<meta property="og:url" content="https://wplll.github.io/2022/10/31/ARIMA/index.html">
+<meta property="og:site_name" content="wpl&#39;web">
+<meta property="og:description" content="ARIMA模型（英语：Autoregressive Integrated Moving Average model），差分整合移动平均自回归模型，又称整合移动平均自回归模型（移动也可称作滑动），是时间序列预测分析方法之一。所以随机生成一个时序数据来体验一下这个模型，如果感觉数据眼熟纯属巧合。 123456789101112from statsmodels.tsa.arima.model impor">
+<meta property="og:locale">
+<meta property="og:image" content="https://wplll.github.io/images/ARIMA_2_1.png">
+<meta property="og:image" content="https://wplll.github.io/images/ARIMA_4_1.png">
+<meta property="og:image" content="https://wplll.github.io/images/ARIMA_5_1.png">
+<meta property="og:image" content="https://wplll.github.io/images/ARIMA_8_1.png">
+<meta property="og:image" content="https://wplll.github.io/images/ARIMA_10_2.png">
+<meta property="og:image" content="https://wplll.github.io/images/ARIMA_13_1.png">
+<meta property="article:published_time" content="2022-10-31T10:08:06.163Z">
+<meta property="article:modified_time" content="2022-10-31T10:11:57.299Z">
+<meta property="article:author" content="w_pl">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wplll.github.io/images/ARIMA_2_1.png"><script>(function() {
+  if (CONFIG.mode !== 'auto') return
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+  const setting = localStorage.getItem('darken-mode') || 'auto'
+  if (setting === 'dark' || (prefersDark && setting !== 'light'))
+    document.documentElement.classList.toggle('dark', true)
+})()</script><!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head><body><script src="https://code.iconify.design/2/2.1.1/iconify.min.js"></script><script>// Define global variable
+IconifyProviders = {
+  // Empty prefix: overwrite default API provider configuration
+  '': {
+    // Use custom API first, use Iconify public API as backup
+    resources: [
+        'https://api.iconify.design',
+    ],
+    // Wait for 1 second before switching API hosts
+    rotate: 1000,
+  },
+};</script><script defer src="https://fastly.jsdelivr.net/npm/animejs@latest"></script><script defer src="/js/ui/fireworks.js" type="module"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/js/sidebar.js" type="module"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button" data-target="post-toc-wrap" title="Table of Contents"><span class="icon iconify" data-icon="ri:list-ordered"></span></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button sidebar-nav-active" data-target="site-overview-wrap" title="Overview"><span class="icon iconify" data-icon="ri:passport-line"></span></li></ul><div class="sidebar-panel sidebar-panel-active" id="site-overview-wrap"><div class="site-info mickey-mouse"><a class="site-author-avatar" href="/about/" title="w_pl"><img width="96" loading="lazy" src="/images/1.jpg" alt="w_pl"></a><div class="site-author-name"><a href="/about/">w_pl</a></div><span class="site-name">wpl'web</span><sub class="site-subtitle">沉沦虚调 懊丧无声</sub><div class="site-description"></div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="Home"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:home-4-line"></span></span></a><div class="site-state-item"><a href="/archives/" title="Archives"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:archive-line"></span></span><span class="site-state-item-count">3</span></a></div><div class="site-state-item"><a href="/categories/" title="Categories"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:folder-2-line"></span></span><span class="site-state-item-count">0</span></a></div><div class="site-state-item"><a href="/tags/" title="Tags"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:price-tag-3-line"></span></span><span class="site-state-item-count">0</span></a></div><a class="site-state-item hty-icon-button" href="https://wplll.github.io" title="文档"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:settings-line"></span></span></a></nav><hr style="margin-bottom:0.5rem"><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" href="/links/" title="我的小伙伴们" style="color:dodgerblue"><span class="icon iconify" data-icon="ri:genderless-line"></span></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><span class="icon iconify" data-icon="ri:contrast-2-line"></span></a></div><div class="sidebar-panel" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content">This post does not have a Table of Contents</div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="hty-card post-block" itemscope itemtype="https://schema.org/Article" style="--smc-primary:#0078E7;"><link itemprop="mainEntityOfPage" href="https://wplll.github.io/2022/10/31/ARIMA/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="w_pl"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="wpl'web"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">ARIMA</h1><div class="post-meta"><div class="post-time"><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:calendar-line"></span></span> <time title="Created: 2022-10-31 18:08:06" itemprop="dateCreated datePublished" datetime="2022-10-31T18:08:06+08:00">2022-10-31</time></div><div class="post-classify"></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body"><p>ARIMA模型（英语：Autoregressive Integrated Moving Average model），差分整合移动平均自回归模型，又称整合移动平均自回归模型（移动也可称作滑动），是时间序列预测分析方法之一。<br><br>所以随机生成一个时序数据来体验一下这个模型，如果感觉数据眼熟纯属巧合。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> statsmodels.tsa.arima.model <span class="keyword">import</span> ARIMA</span><br><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> mean_squared_error <span class="keyword">as</span> MSE</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> statsmodels.api <span class="keyword">as</span> sm</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> r2_score</span><br><span class="line"></span><br><span class="line"><span class="comment"># 载入数据 arima需要pandas来运算</span></span><br><span class="line">data = np.loadtxt(<span class="string">&#x27;test.csv&#x27;</span>, dtype=<span class="built_in">int</span>,delimiter=<span class="string">&#x27;,&#x27;</span>, unpack=<span class="literal">True</span>)</span><br><span class="line">y = data[<span class="number">2</span>].T</span><br><span class="line">y = pd.DataFrame(y)</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plt.plot(y) <span class="comment">#将数据可视化 发现没什么规律很随机</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p><img src="/images/ARIMA_2_1.png" alt="png" loading="lazy"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 由于数据过于随机 所以使用差分将数据归于平稳 这里使用了二阶差分</span></span><br><span class="line">y1 = y.diff(<span class="number">1</span>)</span><br><span class="line">y2 = y1.diff(<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">plt.plot(y1)</span><br><span class="line">plt.plot(y2) <span class="comment">#发现还是波动很大</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+<p><img src="/images/ARIMA_4_1.png" alt="png" loading="lazy"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 画一下拖尾和截尾情况 来进一步确定回归参数</span></span><br><span class="line">fig = plt.figure(figsize=(<span class="number">12</span>,<span class="number">8</span>))</span><br><span class="line"> </span><br><span class="line">ax1 = fig.add_subplot(<span class="number">211</span>)</span><br><span class="line">fig = sm.graphics.tsa.plot_acf(y, lags=<span class="number">20</span>,ax=ax1)</span><br><span class="line">ax1.xaxis.set_ticks_position(<span class="string">&#x27;bottom&#x27;</span>)</span><br><span class="line">fig.tight_layout()</span><br><span class="line"> </span><br><span class="line">ax2 = fig.add_subplot(<span class="number">212</span>)</span><br><span class="line">fig = sm.graphics.tsa.plot_pacf(y, lags=<span class="number">20</span>, ax=ax2)</span><br><span class="line">ax2.xaxis.set_ticks_position(<span class="string">&#x27;bottom&#x27;</span>)</span><br><span class="line">fig.tight_layout()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+
+<p><img src="/images/ARIMA_5_1.png" alt="png" loading="lazy"></p>
+<p>应该差不多就AR(2)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用自带的函数算一下最优参数</span></span><br><span class="line">train_results = sm.tsa.arma_order_select_ic(y, ic=[<span class="string">&#x27;aic&#x27;</span>, <span class="string">&#x27;bic&#x27;</span>], trend=<span class="string">&#x27;n&#x27;</span>, max_ar=<span class="number">8</span>, max_ma=<span class="number">8</span>)</span><br><span class="line"> </span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;AIC&#x27;</span>, train_results.aic_min_order)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;BIC&#x27;</span>, train_results.bic_min_order)</span><br></pre></td></tr></table></figure>
+
+<pre><code>AIC (3, 0)
+BIC (2, 0)
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 根据结果选择200参数</span></span><br><span class="line">model = sm.tsa.ARIMA(y, order=(<span class="number">2</span>, <span class="number">0</span>, <span class="number">0</span>))</span><br><span class="line">results = model.fit()</span><br><span class="line">resid = results.resid <span class="comment">#赋值</span></span><br><span class="line">fig = plt.figure(figsize=(<span class="number">12</span>,<span class="number">8</span>))</span><br><span class="line">fig = sm.graphics.tsa.plot_acf(resid.values.squeeze(), lags=<span class="number">40</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p><img src="/images/ARIMA_8_1.png" alt="png" loading="lazy"></p>
+<p>可以看到效果还不错 那么模型应该还行</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将模型拟合结果和原始数据进行对比</span></span><br><span class="line">pred = results.predict()</span><br><span class="line"><span class="built_in">print</span>(pred)</span><br><span class="line">fig, ax = plt.subplots(figsize=(<span class="number">12</span>, <span class="number">8</span>))</span><br><span class="line">ax = y.plot(ax=ax)</span><br><span class="line">pred.plot(ax=ax)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<pre><code>0     200.149179
+1     377.197543
+2     390.971790
+3     371.277539
+4     291.312595
+         ...    
+75    142.792734
+76    125.375138
+77    125.383622
+78    166.839263
+79    307.552031
+Name: predicted_mean, Length: 80, dtype: float64
+
+
+
+
+
+&lt;AxesSubplot: &gt;
+</code></pre>
+<p><img src="/images/ARIMA_10_2.png" alt="png" loading="lazy"></p>
+<p>可以说是很相像了，接下来预测未来几十天的情况</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">r = results.forecast(<span class="number">82</span>)</span><br><span class="line">r = pd.DataFrame(r)</span><br><span class="line">r</span><br></pre></td></tr></table></figure>
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+<pre><code>.dataframe tbody tr th &#123;
+    vertical-align: top;
+&#125;
+
+.dataframe thead th &#123;
+    text-align: right;
+&#125;
+</code></pre>
+<p></style></p>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>predicted_mean</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>80</th>
+      <td>409.403039</td>
+    </tr>
+    <tr>
+      <th>81</th>
+      <td>404.147892</td>
+    </tr>
+    <tr>
+      <th>82</th>
+      <td>391.591249</td>
+    </tr>
+    <tr>
+      <th>83</th>
+      <td>377.637572</td>
+    </tr>
+    <tr>
+      <th>84</th>
+      <td>364.042914</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>157</th>
+      <td>200.570884</td>
+    </tr>
+    <tr>
+      <th>158</th>
+      <td>200.537803</td>
+    </tr>
+    <tr>
+      <th>159</th>
+      <td>200.507317</td>
+    </tr>
+    <tr>
+      <th>160</th>
+      <td>200.479222</td>
+    </tr>
+    <tr>
+      <th>161</th>
+      <td>200.453332</td>
+    </tr>
+  </tbody>
+</table>
+<p>82 rows × 1 columns</p>
+</div>
+
+
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将预测结果接到原始数据后面并且绘画</span></span><br><span class="line">plt.plot(y)</span><br><span class="line">plt.plot(pred)</span><br><span class="line">plt.plot(r)</span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>[&lt;matplotlib.lines.Line2D at 0x2461d51da30&gt;]
+</code></pre>
+<p><img src="/images/ARIMA_13_1.png" alt="png" loading="lazy"></p>
+<p>可以看出来几天后将开始下降，但不收敛于0，应该数据集过于波动并且数据量太少。</p>
+<p>ARIMA建模过程大概就是这样，感兴趣的可以自己拿数据试着运行一下。如果有大佬对这个模型有好的建议的可以告诉我交流学习一下捏。</p>
+</div></section><ul class="post-copyright"><li class="post-copyright-author"><strong>Post author: </strong>w_pl</li><li class="post-copyright-link"><strong>Post link: </strong><a href="https://wplll.github.io/2022/10/31/ARIMA/" title="ARIMA">https://wplll.github.io/2022/10/31/ARIMA/</a></li><li class="post-copyright-license"><strong>Copyright Notice: </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/deed.zh" target="_blank" rel="noopener" title="CC ZERO 1.0 "><span class="icon iconify" data-icon="ri:creative-commons-line"></span><span class="icon iconify" data-icon="ri:creative-commons-zero-line"></span></a> unless otherwise stated.</li></ul></article><div class="post-nav"><div class="post-nav-item"></div><div class="post-nav-item"><a class="post-nav-next" href="/2022/10/30/XGBoost/" rel="next" title="XGBoost"><span class="post-nav-text">XGBoost</span><span class="icon iconify" data-icon="ri:arrow-right-s-line"></span></a></div></div></div><div class="hty-card" id="comment"></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2019 – 2022 </span><span class="with-love" id="animate"><span class="icon iconify" data-icon="ri:cloud-line"></span></span><span class="author"> w_pl</span></div><div class="powered"><span>Powered by <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> v5.4.2</span><span class="footer-separator">|</span><span>Theme - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.10.9</span></div><div class="live-time"><span>本博客已运行</span><span id="display_live_time"></span><span class="moe-text">(●'◡'●)</span><script>function blog_live_time() {
+  setTimeout(blog_live_time, 1000);
+  const start = new Date('2022-05-26T00:00:00');
+  const now = new Date();
+  const timeDiff = (now.getTime() - start.getTime());
+  const msPerMinute = 60 * 1000;
+  const msPerHour = 60 * msPerMinute;
+  const msPerDay = 24 * msPerHour;
+  const passDay = Math.floor(timeDiff / msPerDay);
+  const passHour = Math.floor((timeDiff % msPerDay) / 60 / 60 / 1000);
+  const passMinute = Math.floor((timeDiff % msPerHour) / 60 / 1000);
+  const passSecond = Math.floor((timeDiff % msPerMinute) / 1000);
+  display_live_time.innerHTML = ` ${passDay} Days ${passHour} Hours ${passMinute} Minutes ${passSecond} Seconds`;
+}
+blog_live_time();
+</script></div><div class="footer-support"><span>本网站由</span><a class="footer-support-logo" href="https://www.upyun.com/?utm_source=lianmeng&amp;utm_medium=referral" target="blank" title="又拍云"><img height="30" src="https://cdn.jsdelivr.net/gh/YunYouJun/cdn/img/logo/upyun-logo.png" alt="又拍云"></a><span>提供 CDN 加速</span></div></footer></div><a class="hty-icon-button" id="back-to-top" aria-label="back-to-top" href="#"><span class="icon iconify" data-icon="ri:arrow-up-s-line"></span><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a><script>function initMourn() {
+  const date = new Date();
+  const today = (date.getMonth() + 1) + "-" + date.getDate()
+  const mourn_days = ["4-4","9-18"]
+  if (mourn_days.includes(today)) {
+    document.documentElement.style.filter = "grayscale(1)";
+  }
+}
+initMourn();</script></body></html>
