@@ -1,0 +1,1332 @@
+<!DOCTYPE html><html lang="zh-Hans"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="w_pl"><meta name="copyright" content="w_pl"><meta name="generator" content="Hexo 5.4.2"><meta name="theme" content="hexo-theme-yun"><title>人工智能导论复习 | wpl'web</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/star-markdown-css@0.4.1/dist/yun/yun-markdown.min.css"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/prism-theme-vars/base.css"><script src="https://fastly.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>function initScrollReveal() {
+  [".post-card",".markdown-body img"].forEach((target)=> {
+    ScrollReveal().reveal(target);
+  })
+}
+document.addEventListener("DOMContentLoaded", initScrollReveal);
+document.addEventListener("pjax:success", initScrollReveal);
+</script><link rel="stylesheet" type="text/css" href="https://fastly.jsdelivr.net/npm/katex@latest/dist/katex.min.css"><script defer src="https://fastly.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script><link rel="stylesheet" type="text/css" href="https://fastly.jsdelivr.net/npm/katex@latest/dist/contrib/copy-tex.min.css"><script defer src="https://fastly.jsdelivr.net/npm/katex@latest/dist/contrib/copy-tex.min.js"></script><script defer src="https://fastly.jsdelivr.net/npm/katex@latest/dist/contrib/auto-render.min.js"></script><script type="module">import { renderKatex } from '/js/utils.js'
+document.addEventListener("DOMContentLoaded", () => {
+  renderKatex({
+    ...{},
+    ...true?.options,
+  });
+});</script><link rel="icon" type="image/svg+xml" href="/yun.svg"><link rel="mask-icon" href="/yun.svg" color="#0078E7"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="preconnect" href="https://fastly.jsdelivr.net/npm/" crossorigin><script id="yun-config">
+    window.Yun = {}
+    window.CONFIG = {"hostname":"wplll.github.io","root":"/","title":"wpl'web","version":"1.10.9","mode":"time","copycode":true,"page":{"isPost":true},"i18n":{"placeholder":"検索...","empty":"${query} が見つかりませんでした.","hits":"${hits} 件見つかりました","hits_time":"${hits} 件見つかりました, ${time} ミリ秒"},"anonymous_image":"https://cdn.yunyoujun.cn/img/avatar/none.jpg","say":{"api":"https://el-bot-api.vercel.app/api/words/young"},"fireworks":{"colors":null},"vendors":{"host":"https://fastly.jsdelivr.net/npm/","darken":"https://fastly.jsdelivr.net/npm/darken@1.5.0"}};
+  </script><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script src="/js/hexo-theme-yun.js" type="module"></script><meta name="description" content="人工智能导论[TOC] 第三章图搜索与问题求解搜索的类型：  按是使用启发式信息  盲目搜索：按预定的控制策略搜索，搜索过程中获得的中间信息 不改变控制策略 eg：广度优先搜索、深度优先搜索、有界深度优先搜索   启发式搜索：搜索时加入了与问题有关的启发性信息，指导搜索 朝最有希望的方向前进，加速问题的求解过程并找到最优解 eg：启发性信息和估价函数、A算法和A*算法    按问题的表示方式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="人工智能导论复习">
+<meta property="og:url" content="https://wplll.github.io/2023/02/20/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%E5%AF%BC%E8%AE%BA/index.html">
+<meta property="og:site_name" content="wpl&#39;web">
+<meta property="og:description" content="人工智能导论[TOC] 第三章图搜索与问题求解搜索的类型：  按是使用启发式信息  盲目搜索：按预定的控制策略搜索，搜索过程中获得的中间信息 不改变控制策略 eg：广度优先搜索、深度优先搜索、有界深度优先搜索   启发式搜索：搜索时加入了与问题有关的启发性信息，指导搜索 朝最有希望的方向前进，加速问题的求解过程并找到最优解 eg：启发性信息和估价函数、A算法和A*算法    按问题的表示方式">
+<meta property="og:locale">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/dfbbbb62863131430144a3470f940e944a3bcaac.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/74bfef97eb50af036115a420172d161e28afe6f0.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/f5f792edc7181660c0cdc3940b54c0ea083d9a3f.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/a04aaf3e8a1c07f6002233105362b8486485870a.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/033cbc41f1821d33ecd69b37a1c853d468a480bd.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/262ab117f81d89e265cc99b85916bbbba9a74d9a.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/8629d2963ce0c2ad23c774fcd83573048aa9980c.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/f0ce070fc6fc19e587900486c366be30cb564744.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/440dcdb79dd34712f535a612b3aa7c9731a17f55.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/a6d42b758e13d1a195e2f8e891e827202c698105.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/236694e951945746bdbe6c32dbc3ccf0246b1d74.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/473eef514d15cfa939874ff54ee140893fb3f53b.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/c30dd9b63169d212074e558730ee3c00025c5a19.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/2230917e730e3265de5151dba7e8ff6754722d03.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/d4da569998bd2ab5ee17b4e4ad351a286d0d3130.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/aea9ac44d4cb7989f7f5d0f3bbf324b93562e488.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/4032a10e8e7ac75a5363e2426b7ee208fe9cb11b.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/ff65c3b4392b062f94b551fac796c1ec728d8a59.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/d6b8fb6d4b627cd234f1828afa6c093b738e359b.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/773b65d309292bcbfbe6c8a3beea1a852292d252.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/fdb83627cbc2f117bf0f88a88798b7f4845fa216.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/6ad2f557ada39f4290e58fb1891a331f5bbddbdc.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/caf229f3586ce2758951e130103fe3030348271b.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/cf28429ed978d726552c60f223c5ba6db7d0d4c2.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/50a823b4851d5351eddeaf9550d37d2698195ea1.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/83fb0daea4e291b804ea957185a2150fd920e620.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/4c6291f0b6f7ad94fe6cbf982c0b722f8d864a1b.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/f322f9d75ecb2160f09688dc279fb0134cb26eba.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/b54721261b4e1e9a956628ccb160f534576da56b.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/7e399e0d14422fe6c2010b46850aece5ea693846.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/bcd9b0357adc7f2d281d78eeb7d6677bc8604a4e.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/e222079c1555c734dc0c59642bc7259004837e6b.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/8adae0501971afaf3532f8bcaa3f64ae16c9c466.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/a81f1ebf2515d1b1b0e043d68667d503fd0f1b3b.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/7ca32e6457336ab8a578a4f5880ed1383f81209c.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/34f63ed55de1fb58c0051f41bae386dffed70d22.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/3cd7445fa45a6f9249bce00704f658a177eccbc8.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/867ed570020e92eebd80f2daff9d36a1013690fb.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/9110ece0336b5bb05f46ae3d8d0403be69903e2b.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/18c520687284dc355842ef40d0740730b81accd3.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/87c18846b7987100fea929db01db617670472de0.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/40545a418859c6880989c1c70b23ef6dc75b998e.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/5859828176c4d02258f4b31b102aa8117155b132.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/a2e24447dc0cdfb4f9ab37204b533b77837d9d1a.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/cca4f907a274d66a4e7ab06d8e3c2631c9d116a6.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/6547db895a7eda8d5d51b1db63e0dceaa48fe8b9.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/493d2fcefe0ba70d38de4044e62fdeebf573901a.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/621a03ce181f1441a6a41096a7afc51d62c79803.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/7585084719a59ea5424ad54d15a4c8315a5aaf78.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/1103d469381b947596fc0c1fb03bd49d12d4b733.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/262dc439de8bee13d89033db0f3fde011e507f5d.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/5c6870475984dd7d5ac9522f743d530163461447.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/c234c947b0b21c4904dcd942782d83d075994851.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/0de70d833e9d0987807fa335b311248fd112b16d.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/a45d6d0b945e85f9d6fcde23eb7cfafe12b0c171.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/5c78e1ca01d36ed3fa69b0408e42ad183c00f262.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/20a4aae4a34d067764c6cb2ee3076a327df0d773.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/f31ad840f276dafa6ec938946fcdcea3cb0c9f39.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/ad4822d6df17dcd5609af3d3529dfa85c2ed73e6.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/73a49760d253768766240a69817c7d80dfa26b4f.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/b2de20b14751939d24bea6034f58e5b300ff74ee.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/99a51943d236b92232a34afd640e0bf8a41fbf28.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/c44509f040dbee797933fc72793f8287b2579942.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/2421552438449fabe15803c224d5a60a2f6a397a.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/4e5a16d15691e733614ed70ad280ceb7521d2549.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/e0f63a947f1dcc0f1bb442879c6152b861cb184a.png">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/album/7c952081af997f81f7f1e60b6affab3ad19a0084.png">
+<meta property="article:published_time" content="2023-02-20T10:35:59.786Z">
+<meta property="article:modified_time" content="2023-02-20T10:35:52.960Z">
+<meta property="article:author" content="w_pl">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i0.hdslb.com/bfs/album/dfbbbb62863131430144a3470f940e944a3bcaac.png"><script>(function() {
+  if (CONFIG.mode !== 'auto') return
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+  const setting = localStorage.getItem('darken-mode') || 'auto'
+  if (setting === 'dark' || (prefersDark && setting !== 'light'))
+    document.documentElement.classList.toggle('dark', true)
+})()</script><!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head><body><script src="https://code.iconify.design/2/2.1.1/iconify.min.js"></script><script>// Define global variable
+IconifyProviders = {
+  // Empty prefix: overwrite default API provider configuration
+  '': {
+    // Use custom API first, use Iconify public API as backup
+    resources: [
+        'https://api.iconify.design',
+    ],
+    // Wait for 1 second before switching API hosts
+    rotate: 1000,
+  },
+};</script><script defer src="https://fastly.jsdelivr.net/npm/animejs@latest"></script><script defer src="/js/ui/fireworks.js" type="module"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/js/sidebar.js" type="module"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="見出し"><span class="icon iconify" data-icon="ri:list-ordered"></span></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="概要"><span class="icon iconify" data-icon="ri:passport-line"></span></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info mickey-mouse"><a class="site-author-avatar" href="/about/" title="w_pl"><img width="96" loading="lazy" src="/images/1.jpg" alt="w_pl"></a><div class="site-author-name"><a href="/about/">w_pl</a></div><span class="site-name">wpl'web</span><sub class="site-subtitle">沉沦虚调 懊丧无声</sub><div class="site-description"></div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="ホーム"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:home-4-line"></span></span></a><div class="site-state-item"><a href="/archives/" title="アーカイブ"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:archive-line"></span></span><span class="site-state-item-count">4</span></a></div><div class="site-state-item"><a href="/categories/" title="カテゴリ"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:folder-2-line"></span></span><span class="site-state-item-count">0</span></a></div><div class="site-state-item"><a href="/tags/" title="タグ"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:price-tag-3-line"></span></span><span class="site-state-item-count">0</span></a></div><a class="site-state-item hty-icon-button" href="https://wplll.github.io" title="文档"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:settings-line"></span></span></a></nav><hr style="margin-bottom:0.5rem"><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" href="/links/" title="我的小伙伴们" style="color:dodgerblue"><span class="icon iconify" data-icon="ri:genderless-line"></span></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><span class="icon iconify" data-icon="ri:contrast-2-line"></span></a></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%E5%AF%BC%E8%AE%BA"><span class="toc-number">1.</span> <span class="toc-text">人工智能导论</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E7%AB%A0%E5%9B%BE%E6%90%9C%E7%B4%A2%E4%B8%8E%E9%97%AE%E9%A2%98%E6%B1%82%E8%A7%A3"><span class="toc-number">1.1.</span> <span class="toc-text">第三章图搜索与问题求解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8A%B6%E6%80%81%E5%9B%BE%E6%90%9C%E7%B4%A2"><span class="toc-number">1.1.1.</span> <span class="toc-text">状态图搜索</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%AF%E5%8F%91%E5%BC%8F%E6%90%9C%E7%B4%A2"><span class="toc-number">1.1.2.</span> <span class="toc-text">启发式搜索</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%B0%E4%BB%B7%E5%87%BD%E6%95%B0"><span class="toc-number">1.1.3.</span> <span class="toc-text">估价函数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E9%81%97%E4%BC%A0%E7%AE%97%E6%B3%95%E7%9A%84%E9%9A%8F%E6%9C%BA%E4%BC%98%E5%8C%96%E6%90%9C%E7%B4%A2-x3D-x3D-%E8%80%83%E8%AE%A1%E7%AE%97%E9%A2%98-x3D-x3D"><span class="toc-number">1.2.</span> <span class="toc-text">第四章 基于遗传算法的随机优化搜索 &#x3D;&#x3D;考计算题&#x3D;&#x3D;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E4%B8%80%E9%98%B6%E8%B0%93%E8%AF%8D%E7%9A%84%E6%9C%BA%E5%99%A8%E6%8E%A8%E7%90%86"><span class="toc-number">1.3.</span> <span class="toc-text">第五章 基于一阶谓词的机器推理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%91%BD%E9%A2%98%E7%9A%84%E8%B0%93%E8%AF%8D%E5%BD%A2%E5%BC%8F%E8%A1%A8%E7%A4%BA-x3D-x3D-%E5%BA%94%E8%AF%A5%E4%BC%9A%E8%80%83-x3D-x3D"><span class="toc-number">1.3.1.</span> <span class="toc-text">自然语言命题的谓词形式表示 &#x3D;&#x3D;应该会考&#x3D;&#x3D;</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%90%E5%8F%A5%E9%9B%86%E5%8F%8A%E5%85%B6%E5%8C%96%E7%AE%80%E6%96%B9%E6%B3%95-x3D-x3D-%E5%BF%85%E8%80%83-x3D-x3D"><span class="toc-number">1.3.2.</span> <span class="toc-text">子句集及其化简方法&#x3D;&#x3D;必考&#x3D;&#x3D;</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%94%E7%94%A8%E5%BD%92%E7%BB%93%E5%8E%9F%E7%90%86%E6%B1%82%E5%8F%96%E9%97%AE%E9%A2%98%E7%AD%94%E6%A1%88-x3D-x3D-%E5%8F%AF%E8%83%BD%E8%80%83-x3D-x3D"><span class="toc-number">1.3.3.</span> <span class="toc-text">应用归结原理求取问题答案 &#x3D;&#x3D;可能考&#x3D;&#x3D;</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%85%AD%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E4%BA%A7%E7%94%9F%E5%BC%8F%E8%A7%84%E5%88%99%E7%9A%84%E6%9C%BA%E5%99%A8%E6%8E%A8%E7%90%86"><span class="toc-number">1.4.</span> <span class="toc-text">第六章 基于产生式规则的机器推理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%A7%E7%94%9F%E5%BC%8F%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.4.1.</span> <span class="toc-text">产生式系统</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%83%E7%AB%A0-%E5%87%A0%E7%A7%8D%E7%BB%93%E6%9E%84%E5%8C%96%E7%9F%A5%E8%AF%86%E8%A1%A8%E7%A4%BA%E5%8F%8A%E5%85%B6%E6%8E%A8%E7%90%86"><span class="toc-number">1.5.</span> <span class="toc-text">第七章 几种结构化知识表示及其推理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%85%AB%E7%AB%A0-%E4%B8%8D%E7%A1%AE%E5%AE%9A%E5%92%8C%E4%B8%8D%E7%A1%AE%E5%AE%9A%E6%80%A7%E7%9F%A5%E8%AF%86%E7%9A%84%E8%A1%A8%E7%A4%BA%E5%92%8C%E6%8E%A8%E7%90%86"><span class="toc-number">1.6.</span> <span class="toc-text">第八章 不确定和不确定性知识的表示和推理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-number">1.6.1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8D%E7%A1%AE%E5%AE%9A%E6%80%A7%E7%9F%A5%E8%AF%86%E7%9A%84%E8%A1%A8%E7%A4%BA%E5%8F%8A%E6%8E%A8%E7%90%86"><span class="toc-number">1.6.2.</span> <span class="toc-text">不确定性知识的表示及推理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%A0%E7%A7%8D%E7%BB%8F%E5%85%B8%E7%9A%84%E4%B8%8D%E7%A1%AE%E5%AE%9A%E6%80%A7%E6%8E%A8%E7%90%86%E6%A8%A1%E5%9E%8B-x3D-x3D-%E5%BF%85%E8%80%83-x3D-x3D"><span class="toc-number">1.6.3.</span> <span class="toc-text">几种经典的不确定性推理模型 &#x3D;&#x3D;必考&#x3D;&#x3D;</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8D%E7%A1%AE%E5%88%87%E6%80%A7%E7%9F%A5%E8%AF%86%E7%9A%84%E8%A1%A8%E7%A4%BA%E5%8F%8A%E6%8E%A8%E7%90%86"><span class="toc-number">1.6.4.</span> <span class="toc-text">不确切性知识的表示及推理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B9%9D%E7%AB%A0-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%EF%BC%9A%E7%AC%A6%E5%8F%B7%E5%8F%91%E7%8E%B0%E4%BA%8E%E4%BA%A4%E4%BA%92%E5%AD%A6%E4%B9%A0"><span class="toc-number">1.7.</span> <span class="toc-text">第九章 机器学习：符号发现于交互学习</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E6%A6%82%E8%BF%B0"><span class="toc-number">1.7.1.</span> <span class="toc-text">机器学习概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%A0%E7%A7%8D%E7%BB%8F%E5%85%B8%E7%9A%84%EF%BC%88%E7%AC%A6%E5%8F%B7%EF%BC%89%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95"><span class="toc-number">1.7.2.</span> <span class="toc-text">几种经典的（符号）学习方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%B3%E7%AD%96%E6%A0%91%E5%AD%A6%E4%B9%A0-x3D-x3D-%E5%8F%AF%E8%83%BD%E4%BC%9A%E8%80%83%E6%9E%84%E5%BB%BA%E5%86%B3%E7%AD%96%E6%A0%91-x3D-x3D"><span class="toc-number">1.7.3.</span> <span class="toc-text">决策树学习 &#x3D;&#x3D;可能会考构建决策树&#x3D;&#x3D;</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0"><span class="toc-number">1.7.4.</span> <span class="toc-text">强化学习</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%8D%81%E4%B8%80%E7%AB%A0-%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0"><span class="toc-number">1.8.</span> <span class="toc-text">第十一章 神经网络学习</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0-%E6%95%B0%E6%8D%AE%E6%8C%96%E6%8E%98%E4%B8%8E%E7%9F%A5%E8%AF%86%E5%8F%91%E7%8E%B0"><span class="toc-number">1.9.</span> <span class="toc-text">第十二章 数据挖掘与知识发现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9F%A5%E8%AF%86%E5%8F%91%E7%8E%B0%E7%9A%84%E4%B8%80%E8%88%AC%E8%BF%87%E7%A8%8B"><span class="toc-number">1.9.1.</span> <span class="toc-text">知识发现的一般过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E8%81%94%E8%A7%84%E5%88%99"><span class="toc-number">1.9.2.</span> <span class="toc-text">关联规则</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%8D%81%E5%85%AD%E7%AB%A0-%E4%B8%93%E5%AE%B6%EF%BC%88%E7%9F%A5%E8%AF%86%E7%B3%BB%E7%BB%9F%EF%BC%89"><span class="toc-number">1.10.</span> <span class="toc-text">第十六章 专家（知识系统）</span></a></li></ol></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="hty-card post-block" itemscope itemtype="https://schema.org/Article" style="--smc-primary:#0078E7;"><link itemprop="mainEntityOfPage" href="https://wplll.github.io/2023/02/20/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%E5%AF%BC%E8%AE%BA/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="w_pl"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="wpl'web"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">人工智能导论复习</h1><div class="post-meta"><div class="post-time"><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:calendar-line"></span></span> <time title="作成日：2023-02-20 18:35:59" itemprop="dateCreated datePublished" datetime="2023-02-20T18:35:59+08:00">2023-02-20</time></div><div class="post-classify"></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body"><h1 id="人工智能导论"><a href="#人工智能导论" class="headerlink" title="人工智能导论"></a>人工智能导论</h1><p>[TOC]</p>
+<h2 id="第三章图搜索与问题求解"><a href="#第三章图搜索与问题求解" class="headerlink" title="第三章图搜索与问题求解"></a><strong>第三章图搜索与问题求解</strong></h2><p><strong>搜索的类型：</strong></p>
+<ul>
+<li><p>按是使用启发式信息</p>
+<ul>
+<li><p><strong>盲目搜索</strong>：按<strong>预定的控制策略</strong>搜索，搜索过程中获得的中间信息 不改变控制策略</p>
+<p>eg：<strong>广度优先搜索、深度优先搜索、有界深度优先搜索</strong> </p>
+</li>
+<li><p><strong>启发式搜索</strong>：搜索时<strong>加入</strong>了与问题有关的<strong>启发性信息</strong>，指导搜索 朝最有希望的方向前进，加速问题的求解过程并找到最优解</p>
+<p>eg：<strong>启发性信息和估价函数、A算法和A*算法</strong></p>
+</li>
+</ul>
+</li>
+<li><p>按问题的表示方式 </p>
+<ul>
+<li><strong>状态空间</strong>搜索：用<strong>状态空间法</strong>求解问题进行的搜索</li>
+<li><strong>与或树</strong>搜索：用<strong>问题归约法</strong>求解问题进行的搜索 &#x3D;&#x3D;（不学，知道有即可）&#x3D;&#x3D;</li>
+</ul>
+</li>
+</ul>
+<h3 id="状态图搜索"><a href="#状态图搜索" class="headerlink" title="状态图搜索"></a>状态图搜索</h3><p><strong>状态图：</strong>描述问题的有向图称为<strong>状态空间图</strong>，简称<strong>状态图</strong></p>
+<p>基本思想：</p>
+<ul>
+<li><p>将问题的<strong>初始状态</strong>作为<strong>当前节点</strong>进行<strong>扩展</strong>，生成<strong>一组子节点</strong></p>
+</li>
+<li><p>然后检查问题的<strong>目标状态（节点）</strong>是否出现在<strong>这些子节点中</strong>。 </p>
+<p>• 若出现，则搜索成功，找到了问题的解； </p>
+<p>• 若未出现，则<strong>再从已生成的子节点中选择一个节点</strong>作为当前节点进行扩展</p>
+</li>
+<li><p><strong>重复上述过程</strong>，直到目标状态出现在子节点中，或无可操作节点为止</p>
+</li>
+</ul>
+<p><strong>状态空间搜索算法的数据结构和符号约定</strong></p>
+<ul>
+<li><p>OPEN表：记录未扩展(待考察)的节点，存放刚（新）生成的节点。 </p>
+</li>
+<li><p>CLOSED表：记录已扩展(考察过)的节点，存放已扩展节点。 </p>
+</li>
+<li><p>S：问题的初试状态。（<strong>起始节点</strong>） </p>
+</li>
+<li><p>G：搜索过程所得到的<strong>搜索图</strong>。 </p>
+</li>
+<li><p>M：当前扩展节点新生成的、<strong>且不是自己先辈</strong>的<strong>子节点集合</strong></p>
+</li>
+</ul>
+<img src="https://i0.hdslb.com/bfs/album/dfbbbb62863131430144a3470f940e944a3bcaac.png" alt="image-20211219165908598" style="zoom:50%;" / loading="lazy">
+
+<p><strong>搜索过程如右图</strong><img src="https://i0.hdslb.com/bfs/album/74bfef97eb50af036115a420172d161e28afe6f0.png" alt="image-20211219165943407" style="zoom:70%;" / loading="lazy"></p>
+<p><strong>盲目搜索小结</strong> &#x3D;&#x3D;（盲目搜索基本都学过，省略）&#x3D;&#x3D;</p>
+<ul>
+<li><strong>本质</strong>：以初始节点为根节点，按照<strong>既（预）定的策略</strong>对状态空间图进行遍历，并希望能够尽早发现目标节点</li>
+<li>遍历策略是既定的，因此称为盲目搜索、</li>
+<li>产生的无用节点较多，效率低，易产生组合爆炸</li>
+<li>若能找到一种方法用于<strong>排列待扩展节点的顺序</strong>，即选择最有希望的节点加以扩展，则搜索效率将会大大提高（<strong>启发式搜索</strong>）</li>
+</ul>
+<h3 id="启发式搜索"><a href="#启发式搜索" class="headerlink" title="启发式搜索"></a>启发式搜索</h3><p><strong>启发信息</strong></p>
+<ul>
+<li>假设<strong>初始状态和目标状态</strong>都是完全<strong>确定的</strong></li>
+<li>从<strong>初始状态到目标状态有一个给定</strong>空间</li>
+<li>问题的关键：<strong>如何有效搜索</strong>这个给定空间</li>
+<li>这种搜索需要某些有关<strong>具体问题领域特性的信息</strong>，把这类特性信息称为<strong>启发信息</strong></li>
+<li><strong>利用启发信息的搜索</strong>方法叫做<strong>“启发式搜索方法”</strong></li>
+</ul>
+<h3 id="估价函数"><a href="#估价函数" class="headerlink" title="估价函数"></a>估价函数</h3><p>估价函数用来估计节点重要性的函数。估价函数 $f(x)$被定义为从初始节点$S_0$ 出发，约束经过节点 $x$ 到达目标节点 $S_g$ 的所有路径中最小路径代价的估计值。它的一般形式为：<br>$$<br>f(x) &#x3D;g(x)+h(x)<br>$$</p>
+<ul>
+<li>$g(x)$是从初始节点 $S_0$ 到节点 $x$ 的实际代价；</li>
+<li>$h(x)$是从节点 $x$ 到目标节点 $S_g$ 的最优路径的估计代价</li>
+</ul>
+<p><strong>全局择优与局部择优</strong></p>
+<ul>
+<li>全局择优：寻找OPEN表中<strong>全部节点</strong>里代价最小的节点进行扩展</li>
+<li>局部择优：仅寻找<strong>当前扩展节点的子节点</strong>中代价最小的节点进行扩展</li>
+</ul>
+<p><strong>A算法（启发式搜索算法）：</strong></p>
+<p>图搜索算法中，如果<strong>搜索的每一步</strong>都利用估价函数$f(x)&#x3D;g(x)+h(x)$对OPEN表中的节点排序，则该搜索算法为A算法。</p>
+<p><strong>A*算法</strong></p>
+<ul>
+<li><p>对A算法的估价函数$f(x)&#x3D;g(x)+h(x)$<strong>加上某些限制</strong>后得到的一种<strong>启发式搜索算法</strong></p>
+</li>
+<li><p>假设$f^*(x)$是<strong>从初始节点</strong>S出发经过<strong>节点</strong>x达到目标节点的最小代价，估价函数$f(x)$是对$f^*(x)$的<strong>估计值</strong>。且$f^*(x)&#x3D;g^*(x)+h^*(x)$</p>
+</li>
+<li><p>A*算法对A算法（全局择优的启发式搜索）中的$g(x)$和$h(x)$分别提出如下限制：</p>
+<ul>
+<li>•$g(x)$是对最小代价$g^*(x)$的估计，且$g(x)&gt;0$</li>
+<li>•$h(x)$是最小代价$h^*(x)$的下界，即对任意节点n均有$h(n)≤h^*(n)$</li>
+<li>•即：满足上述两条限制的A算法称为A*算法。</li>
+</ul>
+</li>
+</ul>
+<h2 id="第四章-基于遗传算法的随机优化搜索-x3D-x3D-考计算题-x3D-x3D"><a href="#第四章-基于遗传算法的随机优化搜索-x3D-x3D-考计算题-x3D-x3D" class="headerlink" title="第四章 基于遗传算法的随机优化搜索 &#x3D;&#x3D;考计算题&#x3D;&#x3D;"></a><strong>第四章 基于遗传算法的随机优化搜索</strong> &#x3D;&#x3D;考计算题&#x3D;&#x3D;</h2><p><strong>遗传操作：</strong></p>
+<ul>
+<li><strong>选择—复制</strong></li>
+<li><strong>交叉</strong></li>
+<li><strong>变异</strong></li>
+</ul>
+<p><strong>选择—复制</strong></p>
+<p>选择种群中**适应度较高的个体(染色体)**进行复制，以生成下一代种群<br>$$<br>P(x_i)的计算为:p(x_i)&#x3D;\frac{f(x_i)}{\sum_{j&#x3D;1}^{N}f(x_i) }\<br>f为适应度函数，f(xi)为x_i的适应度<br>$$<br><strong>交叉</strong></p>
+<p>交叉(crossover)：也称交换(交配或杂交)，即<strong>互换两个染色体（个体）</strong>某些位<strong>上的基因</strong></p>
+<p>eg：<img src="https://i0.hdslb.com/bfs/album/f5f792edc7181660c0cdc3940b54c0ea083d9a3f.png" alt="image-20211219175956280" style="zoom:67%;" / loading="lazy"></p>
+<p><strong>变异</strong></p>
+<p>变异(Mutation)：也称突变，即<strong>改变染色体</strong>某个(些)位上的<strong>基因</strong></p>
+<p>eg：<img src="https://i0.hdslb.com/bfs/album/a04aaf3e8a1c07f6002233105362b8486485870a.png" alt="image-20211219180055546" style="zoom:%;" / loading="lazy"></p>
+<p><strong>遗传算法的操作步骤：</strong></p>
+<img src="https://i0.hdslb.com/bfs/album/033cbc41f1821d33ecd69b37a1c853d468a480bd.png" alt="image-20211219180128456" style="zoom:20%;" / loading="lazy">
+
+<h2 id="第五章-基于一阶谓词的机器推理"><a href="#第五章-基于一阶谓词的机器推理" class="headerlink" title="第五章 基于一阶谓词的机器推理"></a><strong>第五章 基于一阶谓词的机器推理</strong></h2><ul>
+<li><p><strong>谓词</strong>：表达式P(t1, t2, … , tn)称为一个n元谓词，或简称谓词</p>
+<ul>
+<li><p><em>P—</em>谓词名(符号)，表示<strong>对象</strong>的属性、状态、关系、联系或行为</p>
+</li>
+<li><p><em>t</em>1, <em>t</em>2, … , <em>t**n</em>称为<strong>谓词的项</strong>，代表<strong>个体对象</strong>，有几个就是几元谓词</p>
+</li>
+<li><p>eg：prime(2) ：是<strong>一元</strong>谓词，表示：2是个素数； </p>
+<p>​        friend(张三,李四) ：是<strong>二元</strong>谓词，表示：张三和李四是朋友</p>
+</li>
+</ul>
+</li>
+<li><p><strong>函数：（增强谓词的表达能力）</strong></p>
+<ul>
+<li><p><strong>定义：</strong> f (x1, x2, … , xn)表示个体x1, … , xn所对应的个体y，称为（n元）个体函数，简称函数，f是函数符号</p>
+</li>
+<li><p>eg：doctor(father(Li))表示：小李的父亲是医生 </p>
+<p>​        equa(sq(<em>x</em>), <em>y</em>))表示：<em>x</em>的平方等于<em>y</em></p>
+</li>
+</ul>
+</li>
+<li><p><strong>约定：</strong></p>
+<ul>
+<li>大写英文字母——谓词符号 </li>
+<li>小写字母f, g, h——函数符号 </li>
+<li>小写字母x, y, z——个体<strong>变元</strong>符号 </li>
+<li>小写字母a, b, c——个体<strong>常元</strong>符号 </li>
+<li>谓词中的个体——可为变元、常元，也可为函数</li>
+</ul>
+</li>
+</ul>
+<p><strong>2个量词：表示数量的词</strong> </p>
+<ul>
+<li><p>**全称量词  $\forall$**：“所有”、“一切”、“任一”、“全体”、“凡是”等词统称为全称量词。 </p>
+</li>
+<li><p>**存在量词  $\exists $**：“存在”、“一些”、“有些”、“至少有一个”等词统称为存在量词</p>
+</li>
+</ul>
+<p><strong>5个连词（逻辑运算符）：</strong> </p>
+<ul>
+<li><p>合取词∧：表示“并且”，“与”的关系 </p>
+</li>
+<li><p>析取词∨：表示“或者”的关系 </p>
+</li>
+<li><p>蕴涵词→（或“&#x3D;&gt;”）：表示“如果…则”的关系。如： </p>
+<p>P→Q读作“如果P，则Q”，其中P称为条件的<strong>前件</strong>，Q称为条件的<strong>后件。</strong> </p>
+</li>
+<li><p>否定词$\neg$ （或“～”）：表示“非”，对后面命题的否定 </p>
+</li>
+<li><p>等价词↔或（“&lt;-&gt;”）：表示“当且仅当”。</p>
+</li>
+</ul>
+<h3 id="自然语言命题的谓词形式表示-x3D-x3D-应该会考-x3D-x3D"><a href="#自然语言命题的谓词形式表示-x3D-x3D-应该会考-x3D-x3D" class="headerlink" title="自然语言命题的谓词形式表示 &#x3D;&#x3D;应该会考&#x3D;&#x3D;"></a>自然语言命题的谓词形式表示 &#x3D;&#x3D;应该会考&#x3D;&#x3D;</h3><ul>
+<li><p>首先<strong>定义谓词</strong> </p>
+</li>
+<li><p>然后再用<strong>连接词把有关的谓词连接</strong>起来，形成一个谓词公式</p>
+</li>
+</ul>
+<p>eg：<img src="https://i0.hdslb.com/bfs/album/262ab117f81d89e265cc99b85916bbbba9a74d9a.png" alt="image-20211219182201288" style="zoom:80%;" / loading="lazy"></p>
+<p><strong>等价谓词公式：</strong></p>
+<img src="https://i0.hdslb.com/bfs/album/8629d2963ce0c2ad23c774fcd83573048aa9980c.png" alt="image-20211219182419279" style="zoom:80%;" / loading="lazy">
+
+<img src="https://i0.hdslb.com/bfs/album/f0ce070fc6fc19e587900486c366be30cb564744.png" alt="image-20211219182341539" style="zoom:80%;" / loading="lazy">
+
+<h3 id="子句集及其化简方法-x3D-x3D-必考-x3D-x3D"><a href="#子句集及其化简方法-x3D-x3D-必考-x3D-x3D" class="headerlink" title="子句集及其化简方法&#x3D;&#x3D;必考&#x3D;&#x3D;"></a>子句集及其化简方法&#x3D;&#x3D;必考&#x3D;&#x3D;</h3><p><strong>定义</strong>：</p>
+<img src="https://i0.hdslb.com/bfs/album/440dcdb79dd34712f535a612b3aa7c9731a17f55.png" alt="image-20211219182901650" style="zoom:67%;" / loading="lazy">
+
+<img src="https://i0.hdslb.com/bfs/album/a6d42b758e13d1a195e2f8e891e827202c698105.png" alt="image-20211219182921954" style="zoom:67%;" / loading="lazy">
+
+<p><strong>化简方式</strong></p>
+<ol>
+<li>消去蕴含词→和等值词<strong>↔</strong></li>
+</ol>
+<img src="https://i0.hdslb.com/bfs/album/236694e951945746bdbe6c32dbc3ccf0246b1d74.png" alt="image-20211219183037685" style="zoom:80%;" / loading="lazy">
+
+<ol start="2">
+<li>缩小否定词﹁的作用范围，直到其仅作用于原子公式</li>
+</ol>
+<img src="https://i0.hdslb.com/bfs/album/473eef514d15cfa939874ff54ee140893fb3f53b.png" alt="image-20211219183102309" style="zoom:67%;" / loading="lazy">
+
+<ol start="3">
+<li>适当改名，使<strong>量词间不含同名</strong>指导变元和约束变元。即<strong>使不同量词约束的</strong>变元有不同的<strong>名字</strong></li>
+</ol>
+<img src="https://i0.hdslb.com/bfs/album/c30dd9b63169d212074e558730ee3c00025c5a19.png" alt="image-20211219183229403" style="zoom:67%;" / loading="lazy">
+
+<ol start="4">
+<li>消去存在量词</li>
+</ol>
+<ul>
+<li>若该<strong>存在量词</strong>在某些<strong>全称量词</strong>的辖域内，则用这些全称量词指导变元的一个函数<strong>代替</strong>该存在量词辖域中的相应约束变元</li>
+<li>若该存在量词<strong>不在任何全称量词的辖域内</strong>（即它的左边没有全称量词），则用一个<strong>常量符号</strong>代替该存在量词辖域中的<strong>相应约束变元</strong>，则可消去该存在量词</li>
+<li>eg：<img src="https://i0.hdslb.com/bfs/album/2230917e730e3265de5151dba7e8ff6754722d03.png" alt="image-20211219183556194" style="zoom:20%;" / loading="lazy"></li>
+</ul>
+<ol start="5">
+<li><p>消去所有全称量词</p>
+<p>直接删掉</p>
+</li>
+<li><p>化公式为合取范式</p>
+<p>使用逻辑等价式</p>
+</li>
+<li><p>适当改名，使子句间无同名变元</p>
+<p>对子句集中的某些变量重新命名，使任意两子句间不出现相同的变量名</p>
+<p>eg：<img src="https://i0.hdslb.com/bfs/album/d4da569998bd2ab5ee17b4e4ad351a286d0d3130.png" alt="image-20211219183914750" style="zoom:80%;" / loading="lazy"></p>
+</li>
+<li><p>消去合取词∧，以子句为元素组成集合S</p>
+</li>
+</ol>
+<p>eg：<img src="https://i0.hdslb.com/bfs/album/aea9ac44d4cb7989f7f5d0f3bbf324b93562e488.png" alt="image-20211219184044032" loading="lazy"></p>
+<h3 id="应用归结原理求取问题答案-x3D-x3D-可能考-x3D-x3D"><a href="#应用归结原理求取问题答案-x3D-x3D-可能考-x3D-x3D" class="headerlink" title="应用归结原理求取问题答案 &#x3D;&#x3D;可能考&#x3D;&#x3D;"></a>应用归结原理求取问题答案 &#x3D;&#x3D;可能考&#x3D;&#x3D;</h3><p><img src="https://i0.hdslb.com/bfs/album/4032a10e8e7ac75a5363e2426b7ee208fe9cb11b.png" alt="image-20211219184303793" loading="lazy"></p>
+<p>证明结论时，将结论 <strong>非</strong> 后，只要能证明有 <strong>空子句</strong> 出现，即可证明成功</p>
+<p>eg：</p>
+<ol>
+<li><p>证明子句集可不可满足</p>
+<p><img src="https://i0.hdslb.com/bfs/album/ff65c3b4392b062f94b551fac796c1ec728d8a59.png" alt="image-20211219194453077" loading="lazy"></p>
+</li>
+</ol>
+<img src="https://i0.hdslb.com/bfs/album/d6b8fb6d4b627cd234f1828afa6c093b738e359b.png" alt="image-20211219194501340" style="zoom:67%;" / loading="lazy">
+
+<ol start="2">
+<li><p>证明谓词公式是否是逻辑结论</p>
+<img src="https://i0.hdslb.com/bfs/album/773b65d309292bcbfbe6c8a3beea1a852292d252.png" alt="image-20211219194607519" style="zoom:67%;" / loading="lazy"></li>
+</ol>
+<img src="https://i0.hdslb.com/bfs/album/fdb83627cbc2f117bf0f88a88798b7f4845fa216.png" alt="image-20211219194618440" style="zoom:67%;" / loading="lazy">
+
+<ol start="3">
+<li>证明谓词公式是否正确</li>
+</ol>
+<img src="https://i0.hdslb.com/bfs/album/6ad2f557ada39f4290e58fb1891a331f5bbddbdc.png" alt="image-20211219194702289" style="zoom:%;" / loading="lazy">
+
+<p><img src="https://i0.hdslb.com/bfs/album/caf229f3586ce2758951e130103fe3030348271b.png" alt="image-20211219194746906" loading="lazy"></p>
+<h2 id="第六章-基于产生式规则的机器推理"><a href="#第六章-基于产生式规则的机器推理" class="headerlink" title="第六章 基于产生式规则的机器推理"></a><strong>第六章 基于产生式规则的机器推理</strong></h2><p><strong>产生式规则的两种形式：</strong></p>
+<ul>
+<li><p>$$IF&lt;前件&gt; \quad THEN&lt;后件&gt; \eg:IF \ A \quad THEN \ B$$</p>
+</li>
+<li><p>$$&lt;前件&gt;\longrightarrow &lt;后件&gt;\eg:A \longrightarrow B$$</p>
+</li>
+</ul>
+<p><strong>语义：</strong></p>
+<ul>
+<li>如果<strong>前提成立</strong>或<strong>条件满足</strong>，则可得<strong>结论</strong>或<strong>执行相应</strong>的动作</li>
+<li>即后件由前件来触发</li>
+<li>前件是规则的执行条件, 后件是规则体</li>
+</ul>
+<p><strong>推理网络：</strong>相关产生式规则按逻辑关系形成的一个<strong>与-或图</strong></p>
+<p>eg：<img src="https://i0.hdslb.com/bfs/album/cf28429ed978d726552c60f223c5ba6db7d0d4c2.png" alt="image-20211219195556374" style="zoom:80%;" / loading="lazy"></p>
+<h3 id="产生式系统"><a href="#产生式系统" class="headerlink" title="产生式系统"></a>产生式系统</h3><p><strong>产生式系统的三部分</strong>：</p>
+<ul>
+<li><strong>产生式规则库</strong>：描述相应领域知识的产生式规则集</li>
+<li><strong>推理机（控制系统）</strong>：是一个程序，控制协调规则库与数据库的运行，包含推理方式和控制策略</li>
+<li><strong>动态数据库（事实的集合）</strong>：存放问题求解过程中当前信息的数据结构（初始事实、外部数据库输入的事实、中间结果事实和最后结果事实）</li>
+</ul>
+<img src="https://i0.hdslb.com/bfs/album/50a823b4851d5351eddeaf9550d37d2698195ea1.png" alt="image-20211219195711531" style="zoom:80%;" / loading="lazy">
+
+<p><strong>常用推理算法：</strong></p>
+<ul>
+<li>正向推理</li>
+<li>反向推理</li>
+<li>双向推理</li>
+</ul>
+<h2 id="第七章-几种结构化知识表示及其推理"><a href="#第七章-几种结构化知识表示及其推理" class="headerlink" title="第七章 几种结构化知识表示及其推理"></a><strong>第七章 几种结构化知识表示及其推理</strong></h2><p><strong>元组</strong></p>
+<ul>
+<li><p><strong>元组（tuple）</strong>的数学定义:笛卡尔积中的一个元素(<em>d</em>1,<em>d</em>2,…,<em>d**n</em>)，叫 做一个<em>n</em>元组（n-tuple），简称元组</p>
+<ul>
+<li>在关系数据库中，一条记录就是一个元组</li>
+<li>元组通常泛指由若干数据项组成的一个整体</li>
+</ul>
+</li>
+<li><p>三元组的一般表达形式为： (&lt;对象&gt;, &lt;属性&gt;, &lt;值&gt;)或(x,F,v) </p>
+</li>
+<li><p>三元组可方便地表示<strong>简单命题</strong>或<strong>原子谓词公式</strong></p>
+<p>eg:<img src="https://i0.hdslb.com/bfs/album/83fb0daea4e291b804ea957185a2150fd920e620.png" alt="image-20211219200521224" style="zoom:67%;" / loading="lazy"></p>
+</li>
+</ul>
+<p><strong>框架（frame</strong>）：一种描述所论对象（一个事物、事件或概念）<strong>属性</strong>的数据结构</p>
+<ul>
+<li><p>一个框架由若干个被称为<strong>“槽”（slot）</strong>的结构组成。每一个槽又可根据实 际情况划分为若干个<strong>“侧面”（faced）</strong></p>
+</li>
+<li><p>一个<strong>槽</strong>用于描述所论<strong>对象</strong>某一方面<strong>的属性</strong></p>
+</li>
+<li><p>一个侧面用于<strong>描述相应属性</strong>的一个<strong>方面</strong></p>
+</li>
+<li><p>槽和侧面所具有的<strong>属性值</strong>分别被称为<strong>槽值</strong>和<strong>侧面值</strong></p>
+</li>
+<li><p>一般形式：<img src="https://i0.hdslb.com/bfs/album/4c6291f0b6f7ad94fe6cbf982c0b722f8d864a1b.png" alt="image-20211219200716394" style="zoom:67%;" / loading="lazy"></p>
+</li>
+</ul>
+<img src="https://i0.hdslb.com/bfs/album/f322f9d75ecb2160f09688dc279fb0134cb26eba.png" alt="image-20211219200750440" style="zoom:67%;" / loading="lazy">
+
+<ul>
+<li>把具体信息填入槽或侧面后，就得到相应框架的一个<strong>事例框架</strong></li>
+</ul>
+<p><strong>基于框架的推理</strong></p>
+<ul>
+<li>基于框架的推理方法是<strong>继承</strong></li>
+<li>子框架可拥有其父框架的槽及其槽值</li>
+<li>实现继承的操作有<strong>匹配</strong>、<strong>搜索</strong>和<strong>填槽</strong></li>
+</ul>
+<p><strong>语义网络</strong></p>
+<ul>
+<li><p>语义网络是知识的一种<strong>结构化图解表示</strong></p>
+</li>
+<li><p>它是由节点和边（有向弧）组成的一种有向图</p>
+<ul>
+<li><p>节点：表示事物、对象、概念、行为、性质、状态等</p>
+</li>
+<li><p>有向边：表示节点之间的某种联系或关系</p>
+</li>
+<li><p>eg：<img src="https://i0.hdslb.com/bfs/album/b54721261b4e1e9a956628ccb160f534576da56b.png" alt="image-20211219202504569" style="zoom:67%;" / loading="lazy"></p>
+</li>
+</ul>
+</li>
+<li><p>语义网络可表示事物的属性、状态、行为等</p>
+</li>
+<li><p><strong>更适于</strong>表示事物间的<strong>关系和联系</strong></p>
+</li>
+<li><p>关系（或联系）型的知识和能化为关系型的知识，都可用语义网络表示</p>
+</li>
+<li><p>常见的几种关系:</p>
+<ul>
+<li><p><strong>实例关系</strong></p>
+<ul>
+<li>表示类与其实例（个体）之间的关系</li>
+<li>关系“<strong>是一个</strong>”一般标识为“is-a”，或ISA</li>
+</ul>
+<p>eg:<img src="https://i0.hdslb.com/bfs/album/7e399e0d14422fe6c2010b46850aece5ea693846.png" alt="image-20211219202715576" style="zoom:67%;" / loading="lazy"></p>
+</li>
+<li><p><strong>分类（或从属、泛化）关系</strong></p>
+<ul>
+<li>指事物间的<strong>类属关系</strong></li>
+<li>关系“<strong>是一种</strong>”一般标识为“akindof”或AKO</li>
+</ul>
+<p>eg:<img src="https://i0.hdslb.com/bfs/album/bcd9b0357adc7f2d281d78eeb7d6677bc8604a4e.png" alt="image-20211219202817753" style="zoom:67%;" / loading="lazy"></p>
+</li>
+<li><p><strong>组装关系</strong></p>
+<ul>
+<li>若下层概念是上层概念的<strong>一个方面或一部分</strong>，则它们组装关系</li>
+<li>其中，关系“<strong>一部分</strong>”，一般标识为“a-part-of”</li>
+</ul>
+<p>eg:<img src="https://i0.hdslb.com/bfs/album/e222079c1555c734dc0c59642bc7259004837e6b.png" alt="image-20211219202910639" style="zoom:67%;" / loading="lazy"></p>
+</li>
+<li><p><strong>属性关系</strong></p>
+<p>表示对象的属性及其属性值</p>
+<p>eg:<img src="https://i0.hdslb.com/bfs/album/8adae0501971afaf3532f8bcaa3f64ae16c9c466.png" alt="image-20211219202943491" style="zoom:67%;" / loading="lazy"></p>
+</li>
+<li><p><strong>集合与成员关系</strong></p>
+<ul>
+<li>“是……的成员”，表示成员（或元素）与集合之间的关系</li>
+<li>关系“<strong>是成员</strong>”一般标识为“a-member-of”</li>
+</ul>
+<p>eg：<img src="https://i0.hdslb.com/bfs/album/a81f1ebf2515d1b1b0e043d68667d503fd0f1b3b.png" alt="image-20211219203031384" style="zoom:67%;" / loading="lazy"></p>
+</li>
+<li><p><strong>逻辑关系</strong></p>
+<p>如果一个概念可由另一个概念推出，两个概念间存在因果关系，则 称它们之间是逻辑关系</p>
+<p>eg：<img src="https://i0.hdslb.com/bfs/album/7ca32e6457336ab8a578a4f5880ed1383f81209c.png" alt="image-20211219203127483" style="zoom:67%;" / loading="lazy"></p>
+</li>
+<li><p><strong>方位关系</strong></p>
+<p>需指出一个事物发生的时间、位置，或它的组成、形状等时，可 用相应的<strong>方位关系</strong>语义网络表示</p>
+<img src="https://i0.hdslb.com/bfs/album/34f63ed55de1fb58c0051f41bae386dffed70d22.png" alt="image-20211219203210303" style="zoom:67%;" / loading="lazy">
+</li>
+<li><p><strong>所属关系</strong></p>
+<p>所属关系表示<strong>“具有”</strong>的意思</p>
+<p>eg:<img src="https://i0.hdslb.com/bfs/album/3cd7445fa45a6f9249bce00704f658a177eccbc8.png" alt="image-20211219203254022" style="zoom:67%;" / loading="lazy"></p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="第八章-不确定和不确定性知识的表示和推理"><a href="#第八章-不确定和不确定性知识的表示和推理" class="headerlink" title="第八章 不确定和不确定性知识的表示和推理"></a><strong>第八章 不确定和不确定性知识的表示和推理</strong></h2><h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><ol>
+<li><p><strong>不确定性信息（uncertain information）</strong></p>
+<ul>
+<li>不能确定<strong>真实性</strong>的信息，eg：<ul>
+<li>明天下雨</li>
+<li>如果发烧且头痛，则患了感冒</li>
+</ul>
+</li>
+<li>上述信息和知识为<strong>不确定性信息</strong></li>
+</ul>
+</li>
+<li><p><strong>不确切性信息（imprecise information）</strong> </p>
+<ul>
+<li><strong>不够明确、不够严格（有一定弹性）的信息</strong>。例如<ul>
+<li>小王是个高个子（多高算“高个子”，没有明确的、严格的、刚性的标准）</li>
+<li>小明是个好学生</li>
+<li>张三和李四是好朋友</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>不确定性与不确切性的区别与联系</strong></p>
+<ul>
+<li><p>不确定性信息 </p>
+<ul>
+<li>不能够确定 <strong>真伪</strong> 的信息</li>
+<li>事件或事物性状、关系或行为 <strong>不确定、不肯定</strong></li>
+</ul>
+</li>
+<li><p>不确切性信息</p>
+<ul>
+<li>事物的性状、关系或行为 <strong>描述得不够具体、不够严格、不够精确</strong></li>
+</ul>
+</li>
+<li><p>是 <strong>两个相互独立</strong> 的信息属性。据此两个信息。信息可分为4种</p>
+<ul>
+<li>确定-确切性信息</li>
+<li>确定-不确切性信息</li>
+<li>不确定-确切性信息</li>
+<li>不确定-不确切性信息</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>不确定性信息处理与不确切性信息处理</strong></p>
+<ul>
+<li><strong>不确定性</strong>信息处理解决的是：信息<strong>真&#x2F;伪</strong>的<strong>可能性</strong>问题</li>
+<li><strong>不确切性</strong>信息处理解决的是：信息<strong>真&#x2F;伪</strong>的<strong>强弱性</strong>问题</li>
+<li>从 <strong>问题求解</strong> 的角度看：<ul>
+<li>不确定性信息处理解决<strong>可能解的</strong>问题</li>
+<li>不确切性信息处理解决<strong>近似解的</strong>问题</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h3 id="不确定性知识的表示及推理"><a href="#不确定性知识的表示及推理" class="headerlink" title="不确定性知识的表示及推理"></a>不确定性知识的表示及推理</h3><p><strong>不确定性知识的表示</strong></p>
+<ul>
+<li><p>设 $c(S)$ 为命题 $S$ 的<strong>可信度，</strong>二元组 $(S, c(S))$ 为不确定性命题的表示</p>
+</li>
+<li><p>不确定性产生式规则 $A\to B$ （第六章）就可表示为<br>$$<br>(A\to B,c(A\to B)) \quad或\quad A\to (B,c(B|A))\<br>c(B|A)表示规则的结论B在前提A为真的情况下为真的可信度<br>$$<br>eg：如果头痛且发烧，则患了感冒(0.8)</p>
+</li>
+</ul>
+<p><strong>不确定性产生的原因</strong></p>
+<p>由于知识的不确定性，在推理过程中引起 <strong>结论的不确定性</strong> 的 <strong>传播情况</strong></p>
+<ol>
+<li><p><strong>事实（证据）的不确定性</strong>：含糊、不完全、随机和模糊等</p>
+<ul>
+<li>事实不确定性用<strong>可信度</strong> $CF$（certainty factor）值表示</li>
+<li>eg：非典 $CF＝0.1 CF[0,1]$</li>
+</ul>
+</li>
+<li><p><strong>规则的不确定性</strong>：专家掌握的 <strong>规则是经验性</strong></p>
+<ul>
+<li>用<strong>可信度</strong>CF（certainty factor）表示</li>
+<li>eg:如果听诊＝干鸣音 则 诊断＝肺炎 CF＝0.5</li>
+</ul>
+</li>
+<li><p><strong>推理的不确定性</strong> </p>
+<p>推理是 <strong>事实(证据)</strong> 和 **规则 **结合起来得到结论，反映了不确定性的传播过程</p>
+</li>
+</ol>
+<h3 id="几种经典的不确定性推理模型-x3D-x3D-必考-x3D-x3D"><a href="#几种经典的不确定性推理模型-x3D-x3D-必考-x3D-x3D" class="headerlink" title="几种经典的不确定性推理模型 &#x3D;&#x3D;必考&#x3D;&#x3D;"></a>几种经典的不确定性推理模型 &#x3D;&#x3D;必考&#x3D;&#x3D;</h3><p>事实（证据）间有 <strong>“与（and）”</strong> 和 **“或（or）” **两种连接形式</p>
+<ol>
+<li><p><strong>And连接时，结论 可信度的计算</strong><br>$$<br>R:IF\ A\ and\ B\ and\ C …and\ F\ Then\ H \quad CF(R)<br>\ 结论H的可信度：CF(H)&#x3D;CF(R)\times \bf min  {CF(A),CF(B)…}<br>\ 即CF(E1∧E2∧…∧En)＝\bf min{CF(E1), CF(E2), …, CF(En)}<br>$$</p>
+</li>
+<li><p><strong>OR连接时，结论可信度的计算</strong><br>$$<br>R：IF\ A\ or\ B\ or\ C… or\ F\ Then\ H\quad CF(R)<br>\结论H的可信度：CF(H)＝CF(R) × \bf max{CF(A),CF(B)…}<br>\即CF(E1∨E2∨…∨En)＝ \bf max{CF(E1), CF(E2), …, CF(En)}<br>$$</p>
+</li>
+<li><p><strong>重复结论的CF(H)值计算</strong></p>
+<p>结论 $CF(H)$ 分别由不同的两条规则推出，而得两个可信度 $CF(H)_1$ 和 $CF(H)_2$ ，则最终的 $CF(H)$ 为：<img src="https://i0.hdslb.com/bfs/album/867ed570020e92eebd80f2daff9d36a1013690fb.png" alt="image-20211221161910568" style="zoom:80%;" / loading="lazy"></p>
+</li>
+</ol>
+<p><strong>考试出题例子：</strong></p>
+<img src="https://i0.hdslb.com/bfs/album/9110ece0336b5bb05f46ae3d8d0403be69903e2b.png" alt="image-20211221162014766" style="zoom:67%;" / loading="lazy">
+
+<img src="https://i0.hdslb.com/bfs/album/18c520687284dc355842ef40d0740730b81accd3.png" alt="image-20211221162031079" style="zoom:80%;" / loading="lazy">
+
+<h3 id="不确切性知识的表示及推理"><a href="#不确切性知识的表示及推理" class="headerlink" title="不确切性知识的表示及推理"></a>不确切性知识的表示及推理</h3><p><strong>基于模糊集合与模糊关系的模糊推理</strong></p>
+<ul>
+<li><strong>模糊集合与模糊关系</strong><ul>
+<li>模糊集合<ul>
+<li>定义：设<em>U</em>是一个论域，<em>U</em>到区间 [0, 1]的一个映射$μ :U\to [0, 1]$就确定了<em>U</em>的一个<strong>模糊子集A</strong></li>
+<li>映射<em>μ</em>称为<em>A</em>的<strong>隶属函数，记为μ(u)</strong></li>
+<li>对于任意的$u∈U， μ_A(u)∈[0, 1]$称为<em>u</em>属于<strong>模糊子集A</strong>的程度，简称<strong>隶属度</strong></li>
+<li>模糊集合A一般可表示为：</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://i0.hdslb.com/bfs/album/87c18846b7987100fea929db01db617670472de0.png" alt="image-20211225123756552" loading="lazy"></p>
+<p>​					<strong>偶序表示法：</strong><img src="https://i0.hdslb.com/bfs/album/40545a418859c6880989c1c70b23ef6dc75b998e.png" alt="image-20211225131038912" loading="lazy"></p>
+<p>​					<strong>行向量表示法：</strong><img src="https://i0.hdslb.com/bfs/album/5859828176c4d02258f4b31b102aa8117155b132.png" alt="image-20211225131141606" loading="lazy"></p>
+<p>​					<strong>Zadeh表示法：</strong><img src="https://i0.hdslb.com/bfs/album/a2e24447dc0cdfb4f9ab37204b533b77837d9d1a.png" alt="image-20211225131148746" loading="lazy"></p>
+<ul>
+<li><p><strong>模糊关系</strong></p>
+<ul>
+<li><p>定义：集合$U_1, U_2 , …, U_n$的<strong>笛卡尔积集</strong>$U_1×U_2×…×U_n$的一个<strong>模糊子集R</strong>，称为 $U_1, U_2 , …, U_n$间的一个<strong>n元模糊关系</strong></p>
+</li>
+<li><p>特别地，**$U_n$的一个模糊子集称为U上的一个n元模糊关系**</p>
+</li>
+<li><p>eg:设 $U&#x3D;{1,2,3,4,5}$，U上“远大于”模糊关系可用模糊子集表示</p>
+<p><img src="https://i0.hdslb.com/bfs/album/cca4f907a274d66a4e7ab06d8e3c2631c9d116a6.png" alt="image-20211225124646225" loading="lazy"></p>
+</li>
+</ul>
+</li>
+<li><p>模糊集合的运算</p>
+<ul>
+<li><p>可定义模糊集合的<strong>交、并、补</strong>运算</p>
+</li>
+<li><p>设：A，B是论域 U 的模糊子集。A，B的交集 $A\cup B$，并集 $A\cap B$  和补集 $A’$，分别有下面的隶属函数确定：</p>
+<p><img src="https://i0.hdslb.com/bfs/album/6547db895a7eda8d5d51b1db63e0dceaa48fe8b9.png" alt="image-20211225125009940" loading="lazy"></p>
+</li>
+<li><p>eg：<img src="https://i0.hdslb.com/bfs/album/493d2fcefe0ba70d38de4044e62fdeebf573901a.png" alt="image-20211225125121344" style="zoom:80%;" / loading="lazy"></p>
+</li>
+</ul>
+</li>
+<li><p><strong>模糊关系的合成</strong></p>
+<ul>
+<li><p>设有模糊集合 $Q&#x3D;(q_{ij})<em>{n\times m}$，$R&#x3D;(r</em>{ij})<em>{m\times l}$，其合成运算为：$S&#x3D;Q\circ R$ 。其中 $S为n\times l的矩阵$，且：$S&#x3D; \vee</em>{j&#x3D;1}^{m} (q_{ij}\wedge r_{jk}) \quad 1\le i\le n,1\le k\le l$</p>
+</li>
+<li><p>eg:<img src="https://i0.hdslb.com/bfs/album/621a03ce181f1441a6a41096a7afc51d62c79803.png" alt="image-20211225125804998" loading="lazy"></p>
+</li>
+</ul>
+</li>
+<li><p><strong>模糊集合的代数运算</strong></p>
+</li>
+</ul>
+<p>$$<br>代数积:  \mu_{A B}(x)&#x3D;\mu_{A}(x) \mu_{B}(x)<br>\代数和:  \mu_{A+B}(x)&#x3D;\mu_{A}(x)+\mu_{B}(x)-\mu_{A B}(x)<br>\有界和:  \quad \mu_{A \oplus B}(x)&#x3D;\min \left{1, \mu_{A}(x)+\mu_{B}(x)\right}&#x3D;1 \wedge\left[\mu_{A}(x)+\mu_{B}(x)\right]<br>\有界积:  \mu_{A \otimes  B}(x)&#x3D;\max \left{0, \mu_{A}(x)+\mu_{B}(x)-1\right}&#x3D;0 \vee\left[\mu_{A}(x)+\mu_{B}(x)-1\right]<br>$$</p>
+<ul>
+<li>eg：<img src="https://i0.hdslb.com/bfs/album/7585084719a59ea5424ad54d15a4c8315a5aaf78.png" alt="image-20211225130210469" style="zoom:67%;" / loading="lazy"></li>
+</ul>
+<p><strong>模糊推理</strong></p>
+<ul>
+<li>是基于模糊规则（即软语言规则）的一种近似推理</li>
+<li>模糊规则：前提中的模糊集与结论中的模糊集间的一种对应关系</li>
+<li><strong>对应关系</strong>是两集合间的一种<strong>模糊关系</strong>，也可表示为<strong>模糊集合</strong></li>
+<li>一条模糊规则，转换为一个模糊集合（对于有限集则是模糊矩阵）</li>
+</ul>
+<h2 id="第九章-机器学习：符号发现于交互学习"><a href="#第九章-机器学习：符号发现于交互学习" class="headerlink" title="第九章 机器学习：符号发现于交互学习"></a><strong>第九章 机器学习：符号发现于交互学习</strong></h2><h3 id="机器学习概述"><a href="#机器学习概述" class="headerlink" title="机器学习概述"></a>机器学习概述</h3><p><strong>机器学习的原理：</strong></p>
+<ul>
+<li>学习流程：<ul>
+<li>对于<strong>输入</strong>信息，系统根据<strong>目标</strong> 和<strong>经验</strong>做出<strong>决策</strong>予以<strong>响应</strong>，<strong>执行</strong>相应动作</li>
+<li>对目标的实现或任务的完成情况进行<strong>评估</strong></li>
+<li>将本次<strong>输入、响应和评价</strong>作为经验，予以存储记录</li>
+</ul>
+</li>
+<li><strong>首次决策</strong> 时系统无任何经验</li>
+<li>后续决策已有经验积累，经验使系统性能不断改善和提高</li>
+<li>学习方式需延伸和发展<ul>
+<li>经验积累过程中发现<strong>规律（知识）</strong></li>
+<li>规律（知识）指导系统行为</li>
+<li>系统性能会大大改善和提高</li>
+</ul>
+</li>
+<li>学习过程<ul>
+<li><strong>经验积累</strong>过程 </li>
+<li><strong>知识生成</strong>过程</li>
+<li><strong>知识运用</strong>过程</li>
+</ul>
+</li>
+</ul>
+<img src="https://i0.hdslb.com/bfs/album/1103d469381b947596fc0c1fb03bd49d12d4b733.png" alt="image-20211221163041619" style="zoom:20%;" / loading="lazy">
+
+<p><strong>机器学习分类：</strong></p>
+<ol>
+<li><p>基于 <strong>学习途径</strong> 的分类</p>
+<ul>
+<li><p><strong>符号学习</strong></p>
+<ul>
+<li>以<strong>符号数据</strong>为输入，以<strong>符号运算</strong>为方法</li>
+</ul>
+</li>
+<li><p><strong>神经网络学习（或连接学习）</strong></p>
+<ul>
+<li>以<strong>符号数据</strong>为输入，以<strong>符号运算</strong>为方法</li>
+</ul>
+</li>
+<li><p><strong>统计学习</strong></p>
+</li>
+<li><p><strong>交互学习</strong></p>
+<ul>
+<li>交互学习的典型方法就是<strong>强化学习（增强学习）</strong></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>基于 <strong>学习方法</strong> 的分类</p>
+<ul>
+<li><strong>归纳学习</strong>：即由 <strong>特殊到一般</strong> 的学习</li>
+<li><strong>演绎学习</strong>：即由 <strong>一般到特殊</strong> 的学习</li>
+<li><strong>类比学习</strong>：基于 <strong>类比推理</strong> 的学习</li>
+<li><strong>分析学习</strong>：利用<strong>先验知识</strong>和<strong>演绎推理</strong>来扩大样例提供的信息的一种学习</li>
+</ul>
+</li>
+<li><p>基于 <strong>样本数据特点</strong> 的分类</p>
+<ul>
+<li><strong>有监督学习（supervised learning，亦称有导师学习）</strong><ul>
+<li>样本数据为一些由向量 $(x_1, x_2,…, x_n)$ 和 **一个对应值y **组成的 <strong>序对</strong></li>
+<li>用当前由 $(x_1, x_2,…, x_n)$所求得函数值 $y’$ 与原对应值 $y$ 做比较</li>
+<li>然后根据<strong>误差</strong>决定是否对所选用的<strong>函数模型的参数</strong>进行修正</li>
+<li>以概率函数、代数函数或人工神经网络为<strong>基本函数模型</strong></li>
+<li>采用<strong>迭代计算</strong>的方法，来拟合相应的数据集</li>
+<li>学习结果为<strong>函数</strong>（即隐藏于样本数据中的规律）</li>
+<li>常用于<strong>分类问题</strong>和<strong>回归问题</strong>，以对未知进行预测</li>
+</ul>
+</li>
+<li><strong>无监督学习（unsupervised learning，亦称无导师学习）</strong><ul>
+<li>样本数据为一些向量(x1, x2,…, xn) （而无对应值y）。</li>
+<li>其学习方法就是<strong>聚类</strong>，即把相似的对象做为一类</li>
+<li>学习结果为<strong>数据类别</strong>，即隐藏于样本数据中的模式（类）或结构</li>
+<li>无监督学习被用于聚类问题，也可用于<strong>数据降维</strong>（dimensionality reduction）和<strong>图像压缩</strong>（image compression）等</li>
+<li><strong>聚类学习</strong>和<strong>竞争学习</strong>都是典型的无监督学习</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>基于 <strong>数据形式</strong> 的分类</p>
+<ul>
+<li><p><strong>结构化学习</strong></p>
+<p>以 <strong>结构化数据</strong> 为输入，以<strong>数据计算或符号推演为方法</strong>  </p>
+<p>eg:<strong>神经网络学习、</strong>统计学习、<strong>决策树学习</strong>、规则学习</p>
+</li>
+<li><p><strong>非结构化学习</strong></p>
+<p>以非结构化数据为输入</p>
+<p>eg：类比学习、案例学习、解释学习</p>
+</li>
+</ul>
+</li>
+<li><p>基于 <strong>学习目标</strong> 的分类</p>
+<ul>
+<li><p><strong>概念学习</strong>  eg：示例学习</p>
+</li>
+<li><p><strong>规则学习</strong>  eg：<strong>决策树学习</strong></p>
+</li>
+<li><p><strong>函数学习</strong>  eg：<strong>神经网络学习</strong>、统计学习中的监督学习</p>
+</li>
+<li><p><strong>类别学习</strong>  eg：<strong>无监督学习</strong></p>
+</li>
+<li><p><strong>贝叶斯网络学习</strong> </p>
+</li>
+<li><p>等等</p>
+</li>
+</ul>
+</li>
+</ol>
+<h3 id="几种经典的（符号）学习方法"><a href="#几种经典的（符号）学习方法" class="headerlink" title="几种经典的（符号）学习方法"></a>几种经典的（符号）学习方法</h3><p><strong>记忆学习</strong></p>
+<ul>
+<li>也称<strong>死记硬背学习</strong>或<strong>机械学习</strong></li>
+<li>此方法不要求系统具有对复杂问题求解的能力，即<strong>没有推理技能</strong></li>
+<li>学习方法<ul>
+<li>直接记录问题有关的信息</li>
+<li>然后检索并利用这些存储的信息来解决问题</li>
+</ul>
+</li>
+</ul>
+<p><strong>示例学习</strong></p>
+<ul>
+<li>也称实例学习, 是一种归纳学习</li>
+<li>从若干实例(含正例和反例)中，<strong>归纳</strong>出一般概念或规则的学习方法</li>
+</ul>
+<p>eg：<img src="https://i0.hdslb.com/bfs/album/262dc439de8bee13d89033db0f3fde011e507f5d.png" alt="image-20211221173410394" style="zoom:70%;" / loading="lazy"></p>
+<p><strong>演绎学习</strong></p>
+<ul>
+<li>基于演绎推理的一种学习</li>
+<li>是一种<strong>保真变换</strong>，即若前提真则推出的结论也为真</li>
+<li>学习系统：<ul>
+<li>由给定的知识进行演绎的保真推理</li>
+<li>并存储有用的结论</li>
+</ul>
+</li>
+</ul>
+<p><strong>类比学习</strong></p>
+<ul>
+<li><p>学习过程的主要步骤</p>
+<ul>
+<li><p><strong>回忆与联想</strong>：</p>
+<p>遇到新情况或新问题时，先回忆与联想，<strong>找出与之相似的已解决的有关问题</strong>，以获得有关知识</p>
+</li>
+<li><p><strong>建立对应关系：</strong></p>
+<p>建立相似问题知识与求解问题间的<strong>对应关系</strong>，以获得求解问题的知识</p>
+</li>
+<li><p><strong>验证与归纳：</strong></p>
+<p>检验所获知识的有效性，如有错则重复上述步骤修正，直到获得正确知识</p>
+<p>对正确知识进行推广、归纳等，以取得一般性知识</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>eg：案例（范例）学习、迁移学习（transfer learning）</p>
+<p><strong>解释（分析）学习</strong></p>
+<ul>
+<li><p><strong>解释学习（Explanation-Based Learning, EBL）</strong>:</p>
+<ul>
+<li>运用领域知识，通过对实例的详细分析来<strong>构造解释结构</strong></li>
+<li>然后对解释<strong>进行推广</strong>，以得到关于实例的<strong>更一般性描述</strong>的学习方法</li>
+</ul>
+</li>
+<li><p><strong>一般框架：</strong></p>
+<ul>
+<li><p>给定：领域知识、目标概念、训练实例和操作性准则</p>
+</li>
+<li><p>找出：满足<strong>操作性准则</strong>的关于目标概念的充分条件</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>发现学习</strong></p>
+<ul>
+<li>系统直接从（数据）环境中归纳总结出<strong>规律性知识</strong>的一种学习</li>
+<li>发现学习也是一种归纳学习，且是一种<strong>高级的</strong>学习过程</li>
+</ul>
+<h3 id="决策树学习-x3D-x3D-可能会考构建决策树-x3D-x3D"><a href="#决策树学习-x3D-x3D-可能会考构建决策树-x3D-x3D" class="headerlink" title="决策树学习 &#x3D;&#x3D;可能会考构建决策树&#x3D;&#x3D;"></a>决策树学习 &#x3D;&#x3D;可能会考构建决策树&#x3D;&#x3D;</h3><p><strong>决策树</strong></p>
+<ul>
+<li>也称判定树，是由对象的若干属性、属性值和有关决策组成的一棵树</li>
+<li><strong>节点为属性，分枝为相应的属性值</strong>，分枝间是逻辑“或”关系</li>
+<li>根节点到叶节点的所有节点和边，按顺序连成一条分枝路径</li>
+<li><strong>叶节点代表相应分枝的结果，即决策（或分类）</strong></li>
+</ul>
+<p><strong>决策树学习的基本方法和步骤</strong>：</p>
+<ol>
+<li><strong>选属性</strong>，按此属性的不同取值对实例集进行分类</li>
+<li>以该属性为<strong>根节点</strong>，以其不同取值作为根节点的分枝画树</li>
+<li>考察所得每一子类<ul>
+<li>若其实例的结论完全相同，则以此结论作为相应分枝末端的叶节点</li>
+<li>否则，选取一个<strong>非父节点</strong>的属性，重复步骤(1)、(2)</li>
+<li>迭代，直到所有子集全都满足：实例结论完全相同，而得到所有的叶节点为止</li>
+</ul>
+</li>
+</ol>
+<p><strong>ID3算法（如何选择属性作为结点）</strong></p>
+<ul>
+<li>以<strong>信息熵</strong>为度量，用于决策树节点的属性选择</li>
+<li>每次优先选取信息量最多的属性，亦即能使熵值变成最小的属性，以构造一棵熵值下降最快的决策树，到叶子节点处的熵值为0</li>
+<li>每个叶子节点对应的实例集中的实例属于同一类</li>
+</ul>
+<p><strong>信息熵和条件熵</strong> </p>
+<ul>
+<li>设<em>S</em>是一个实例集(或子实例集)，<em>A</em>为<em>S</em>中实例的一个属性</li>
+<li>$H(S)$和$H(S|A)$分别为实例集<em>S</em>的<strong>信息熵</strong>和<strong>条件熵</strong>，计算公式如下</li>
+</ul>
+<p><img src="https://i0.hdslb.com/bfs/album/5c6870475984dd7d5ac9522f743d530163461447.png" alt="image-20211221190846795" loading="lazy"></p>
+<p>​	</p>
+<p><strong>基于条件熵的属性选择</strong></p>
+<p>对一个待分类的实例集<em>S</em></p>
+<ul>
+<li>先分别计算各属性<em>A**j</em>(<em>j</em>&#x3D;1,2,…,<em>l</em> )的条件熵<em>H</em>(<em>S</em>| <em>A</em>j)</li>
+<li>然后取其<strong>条件熵最小</strong>的属性<em>A**s</em>作为当前节点</li>
+</ul>
+<p><strong>具体题中不用计算，凭直觉选，哪个对结果影响更小，选哪个作为结点</strong></p>
+<h3 id="强化学习"><a href="#强化学习" class="headerlink" title="强化学习"></a>强化学习</h3><ul>
+<li><p><strong>强化学习（reinforcement learning，亦称增强学习）</strong></p>
+<ul>
+<li>针对<strong>智能机器人</strong>或更一般的<strong>智能体（Agent）</strong></li>
+<li>在与环境交互的过程中，获得<strong>最优动作决策和最优行动策略</strong>（policy，即最 优动作序列）的一种机器学习方法</li>
+</ul>
+</li>
+<li><p>强化学习所解决的一类问题可描述为:</p>
+<ul>
+<li><p>机器人R和环境E</p>
+</li>
+<li><p>E有若干个不同的状态s1,s2…..sn</p>
+</li>
+<li><p>R执行一动作(action)a后，环境E立刻对其做出评价 </p>
+</li>
+<li><p>给R反馈一个奖&#x2F;惩值</p>
+<img src="https://i0.hdslb.com/bfs/album/c234c947b0b21c4904dcd942782d83d075994851.png" alt="image-20211221192036334" style="zoom:20%;" / loading="lazy"></li>
+</ul>
+</li>
+<li><p>实质：对任一非目标状态<em>s</em>，要选择其<strong>下一个</strong>有利于<strong>尽快到达目标状态</strong>的<strong>最优动作a</strong></p>
+</li>
+</ul>
+<h2 id="第十一章-神经网络学习"><a href="#第十一章-神经网络学习" class="headerlink" title="第十一章 神经网络学习"></a><strong>第十一章 神经网络学习</strong></h2><p><strong>人工神经元</strong></p>
+<ul>
+<li><p><strong>人工神经元的性质</strong></p>
+<ul>
+<li><strong>多输入单输出</strong></li>
+<li>突触具有<strong>加权</strong>的效果</li>
+<li>信息加工是<strong>非线性</strong></li>
+</ul>
+</li>
+<li><p><strong>人工神经元的输入输出关系可描述为</strong>：</p>
+<ul>
+<li>x1、x2、…xn为输入</li>
+<li>y为神经元的输出</li>
+<li>w1、w2….wn为权值，即神经元间的连接强度</li>
+<li>$\theta $为阈值，f(X)为神经元的激活函数</li>
+</ul>
+</li>
+</ul>
+<img src="https://i0.hdslb.com/bfs/album/0de70d833e9d0987807fa335b311248fd112b16d.png" alt="image-20211225114949730" style="zoom:20%;"  loading="lazy">
+
+
+
+<p>不带激活函数的 <strong>单层&#x2F;多个感知机</strong> 只能解决线性可分的问题，<strong>解决方法：</strong>高等数学中的 <strong>不定积分，画曲为止</strong> 近似求解 ： <strong>使用激活函数</strong></p>
+<p><strong>激活函数的作用：</strong>加入<strong>非线性因素</strong>，使神经网络可任意逼近任何非线性函数</p>
+<p><strong>常见的激活函数：</strong></p>
+<ul>
+<li><strong>阶跃函数</strong> <img src="https://i0.hdslb.com/bfs/album/a45d6d0b945e85f9d6fcde23eb7cfafe12b0c171.png" alt="image-20211225115606825" loading="lazy"></li>
+<li><strong>Sigmoid函数</strong> <img src="https://i0.hdslb.com/bfs/album/5c78e1ca01d36ed3fa69b0408e42ad183c00f262.png" alt="image-20211225115617158" loading="lazy"></li>
+<li><strong>分段线性函数</strong> <img src="https://i0.hdslb.com/bfs/album/20a4aae4a34d067764c6cb2ee3076a327df0d773.png" alt="image-20211225115626435" loading="lazy"></li>
+<li><strong>符号函数</strong>  <img src="https://i0.hdslb.com/bfs/album/f31ad840f276dafa6ec938946fcdcea3cb0c9f39.png" alt="image-20211225115711453" loading="lazy"></li>
+<li>**双曲正切函数 ** <img src="https://i0.hdslb.com/bfs/album/ad4822d6df17dcd5609af3d3529dfa85c2ed73e6.png" alt="image-20211225115718010" loading="lazy"></li>
+<li>**ReLU函数 ** <img src="https://i0.hdslb.com/bfs/album/73a49760d253768766240a69817c7d80dfa26b4f.png" alt="image-20211225115725879" loading="lazy"></li>
+</ul>
+<p><strong>神经网络的拓扑结构</strong></p>
+<ul>
+<li><strong>分层前向</strong> 网络</li>
+<li><strong>反馈前向</strong> 网络</li>
+<li><strong>互联前向</strong> 网络</li>
+<li><strong>广泛互联</strong> 网络</li>
+</ul>
+<p><strong>神经网络的功能</strong></p>
+<ul>
+<li>数学上的<strong>映射逼近</strong> </li>
+<li>数据<strong>聚类、压缩</strong></li>
+<li><strong>联想记忆</strong></li>
+<li><strong>优化计算和组合优化问题求解</strong> </li>
+<li>模式分类 </li>
+<li>概率密度函数的估计</li>
+</ul>
+<p><strong>神经网络学习机理与方法</strong></p>
+<ul>
+<li><p><strong>学习</strong>是神经网络的重要特征之一</p>
+</li>
+<li><p>通过学习&#x2F;训练，改变其<strong>内部状态</strong>，使输入&#x2F;输出呈现某种规律性</p>
+</li>
+<li><p>学习过程： </p>
+<ul>
+<li>将样本数据作为<strong>输入&#x2F;输出</strong> </li>
+<li>网络按照一定的<strong>训练规则</strong>，自动调节神经元间的<strong>连接强度</strong>或<strong>拓扑结构</strong> </li>
+<li>当网络的<strong>实际输出</strong>满足期望要求或趋于稳定时，则学习成功</li>
+</ul>
+</li>
+<li><p><strong>学习规则（即权值修正规则）</strong></p>
+<ul>
+<li><strong>Hebb规则（相关规则）</strong><ul>
+<li>若相邻神经元i与j同时处于兴奋状态，则它们间的连接强度应加强</li>
+<li>Hebb规则并<strong>未准确反映神经元</strong>在学习过程中的突触变化的<strong>基本规律</strong></li>
+</ul>
+</li>
+<li><strong>δ学习规则（误差修正规则）</strong><ul>
+<li>根据 <strong>实际输出与期望输出的误差</strong> 对网络内部进行修改</li>
+<li><strong>网络输出均能满足要求</strong></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>学习方法</strong> </p>
+<ul>
+<li><p>根据<strong>样例数据的特点</strong>，神经网络学习分为： </p>
+<ul>
+<li>有监督学习 </li>
+<li>无监督学习</li>
+</ul>
+</li>
+<li><p>根据神经网络<strong>内部状态</strong>的变化，神经网络学习可分为： </p>
+<ul>
+<li>权值修正 </li>
+<li>拓扑变化 </li>
+<li>权值与拓扑修正</li>
+</ul>
+</li>
+<li><p>神经网络学习还可分为： </p>
+<ul>
+<li><p>确定性学习 </p>
+</li>
+<li><p>随机性学习</p>
+</li>
+</ul>
+</li>
+<li><p>此外还有竞争学习、BP学习、玻尔兹曼学习、迁移学习、深度学习等</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>神经网络的分类</strong></p>
+<ul>
+<li><p><strong>按网络结构分类</strong> </p>
+<ul>
+<li>前向（馈）网络 </li>
+<li>反馈网络</li>
+</ul>
+</li>
+<li><p><strong>按学习方式分类</strong> </p>
+<ul>
+<li>有监督（导师）学习网络 </li>
+<li>无监督（导师）学习网络</li>
+</ul>
+</li>
+<li><p><strong>按网络的状态分类</strong> </p>
+<ul>
+<li>连续型网络 </li>
+<li>离散型网络</li>
+</ul>
+</li>
+<li><p><strong>按网络的活动方式分类</strong> </p>
+<ul>
+<li>确定性网络 </li>
+<li>随机性网络</li>
+</ul>
+</li>
+</ul>
+<p><strong>BP(Back-Propagatino)网络的特点</strong></p>
+<ul>
+<li><p>拓扑结构为分层前向网络</p>
+</li>
+<li><p><strong>同层节点间不相互连接，层与层之间多采用全互连</strong> </p>
+</li>
+<li><p>常采用<strong>Sigmoid(S型)函数</strong>：<img src="https://i0.hdslb.com/bfs/album/b2de20b14751939d24bea6034f58e5b300ff74ee.png" alt="image-20211225121054737" loading="lazy"></p>
+</li>
+<li><p>学习方式为<strong>有监督学习</strong> </p>
+</li>
+<li><p>学习算法为<em>δ</em>学习规则, 称为<strong>误差反向传播算法</strong>： </p>
+<ul>
+<li><p>工作信号<strong>正向传播</strong>：输入经隐层到输出层，最后形成输出 </p>
+</li>
+<li><p>误差<strong>反向传播</strong>：从<strong>输出层</strong>开始，逐层将误差传到<strong>输入层</strong>，并修改各层连接权值，使<strong>误差信号为最小</strong>的过程</p>
+</li>
+<li><p>公式推导思想：修正网络权值与阈值，使误差函数<strong>沿梯度方向下降</strong></p>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>深度学习</strong></p>
+<ul>
+<li>深度学习：基于<strong>深度神经网络</strong>的神经网络学习或机器学习。 </li>
+<li>深度神经网络： <ul>
+<li>含有多个(<strong>数个到数千个)<strong>隐层的</strong>前向（前馈）</strong>神经网络。 </li>
+<li>其隐层可能是： <ul>
+<li>一行<strong>神经元</strong> </li>
+<li>一行由神经元排列而成的<strong>矩阵</strong> </li>
+<li>一行<strong>网络模块</strong>，且各层神经元间并非必须为全连接</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>深度学习的优异效绩归功于以下两点： <ul>
+<li><strong>自动特征发现</strong>（Automating feature discovery）的潜质和特性</li>
+<li>采用的“<strong>逐层训练，多级学习（抽象）</strong>（learning multiple levels of representation）” 等技术技巧</li>
+</ul>
+</li>
+</ul>
+<p><strong>深度学习的发展</strong></p>
+<ul>
+<li><p>深度<strong>置信网络</strong>和深度<strong>卷积网络</strong> </p>
+</li>
+<li><p>深度<strong>堆栈自编码</strong>网络、深度<strong>反卷积</strong>网络、深度<strong>复卷积</strong>网络</p>
+</li>
+<li><p><strong>稀疏</strong>深度网络、<strong>深度循环和递归</strong>网络、深度<strong>生成</strong>网络等</p>
+</li>
+<li><p>复合型的深度网络 </p>
+<ul>
+<li>深度融合网络 </li>
+<li>深度贝叶斯网络</li>
+</ul>
+</li>
+<li><p>深度学习的内涵：“深度”从原来的<strong>空间（网络结构）</strong>概念扩展到<strong>时间（序列）</strong>概念</p>
+</li>
+</ul>
+<h2 id="第十二章-数据挖掘与知识发现"><a href="#第十二章-数据挖掘与知识发现" class="headerlink" title="第十二章 数据挖掘与知识发现"></a><strong>第十二章 数据挖掘与知识发现</strong></h2><p><strong>数据挖掘</strong></p>
+<ul>
+<li><p><strong>数据挖掘(DM，也称数据开采、数据采掘)：</strong> </p>
+<ul>
+<li><p>是KDD过程的一个特定步骤 </p>
+</li>
+<li><p><strong>从数据中提取或挖掘知识</strong></p>
+</li>
+</ul>
+</li>
+<li><p>知识发现是从数据中发现有用知识的整个过程(KDD)。</p>
+<ul>
+<li><p>广义的知识发现(KD) </p>
+</li>
+<li><p>从数据库中的发现知识(KDD)，本章知识发现主要指KDD。</p>
+</li>
+</ul>
+</li>
+<li><p>KDD过程定义:从数据集中识别出有效的、新颖的、潜在有用的，以及最终可理解的模式的高级处理过程</p>
+</li>
+<li><p>数据挖掘和知识发现的目的 </p>
+<ul>
+<li>从数据集中<strong>抽取和精化一般规律或模式</strong></li>
+<li>涉及的数据形态有： <ul>
+<li>数值、文字、符号、图形、图像、声音 </li>
+<li>视频和Web网页等。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>数据挖掘与知识发现已成为<strong>AI和IT</strong>的一个热门领域 </p>
+</li>
+<li><p>应用范围非常广泛，已构成AI技术与应用的一个重要分支领域</p>
+<ul>
+<li>企业数据、商业数据、科学实验数据、管理决策数据等 </li>
+<li>研究内容已相当丰富：如Web挖掘和大数据挖掘</li>
+</ul>
+</li>
+</ul>
+<h3 id="知识发现的一般过程"><a href="#知识发现的一般过程" class="headerlink" title="知识发现的一般过程"></a><strong>知识发现的一般过程</strong></h3><img src="https://i0.hdslb.com/bfs/album/99a51943d236b92232a34afd640e0bf8a41fbf28.png" alt="image-20211225121941938" style="zoom:67%;" / loading="lazy">
+
+<ul>
+<li><p><strong>数据准备：</strong>  <strong>数据选择(data selection)<strong>、</strong>数据预处理(datapreprocessing)<strong>和</strong>数据转换(data transformation)</strong></p>
+<ul>
+<li><p><strong>数据选择：</strong>确定操作对象，即目标数据(target data)，是根据用户的需要，从原始DB中选取的一组数据。</p>
+</li>
+<li><p><strong>数据预处理</strong>：消除噪声、处理缺值数据、消除重复记录等</p>
+</li>
+<li><p><strong>数据转换：</strong>完成数据<strong>类型转换</strong>，进行<strong>属性约简</strong>（从初始属性中找出真正有用的属性，删除无用属性，以减少数据挖掘时要考虑的属性个数）</p>
+</li>
+</ul>
+</li>
+<li><p><strong>数据挖掘</strong></p>
+<ul>
+<li><p><strong>首先确定挖掘的任务或目的</strong></p>
+</li>
+<li><p><strong>确定使用何种挖掘算法</strong></p>
+</li>
+<li><p>**数据发掘的方法 **</p>
+<ul>
+<li>数据总结</li>
+<li>概念描述</li>
+<li>分类</li>
+<li>聚类</li>
+<li>相关性分析</li>
+<li>偏差分析</li>
+<li>建模</li>
+<li><strong>注意：关联分析、聚类分析、分类、预测</strong></li>
+</ul>
+</li>
+<li><p><strong>数据挖掘的方法</strong></p>
+<ul>
+<li>统计方法 </li>
+<li>机器学习方法 </li>
+<li>粗糙集 </li>
+<li>智能计算方法 </li>
+<li>可视化</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>结果的解释与评价</strong></p>
+<ul>
+<li><p>经过评估，剔除<strong>冗余或无关</strong>的模式</p>
+</li>
+<li><p><strong>不满足用户要求的模式</strong>，需回<strong>退到KDD过程的前面阶段</strong></p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="关联规则"><a href="#关联规则" class="headerlink" title="关联规则"></a>关联规则</h3><p><strong>关联规则</strong></p>
+<ul>
+<li>事件或数据项之间有某种<strong>相关性</strong>的一种<strong>产生式规则</strong>。例如： <ul>
+<li>如果某人买了一台笔记本电脑，则该人还会买一款应用软件。可化为： </li>
+<li>buys(某人, 笔记本电脑) $\to$ buys(该人, 应用软件) 可简化为： </li>
+<li>笔记本电脑 $\to$ 应用软件</li>
+</ul>
+</li>
+<li>这些关联未必是必然的，是一条<strong>不确定性规则</strong> </li>
+<li>为刻画不确定性，引入多种度量</li>
+</ul>
+<p><strong>不确定度量</strong></p>
+<ul>
+<li><p><strong>支持度（support）：</strong>规则前后件<strong>同时</strong>出现的概率。 </p>
+</li>
+<li><p><strong>置信度（confidence）：</strong>规则前件出现时，后件<strong>也出现</strong>的概率</p>
+</li>
+<li><p>eg：<img src="https://i0.hdslb.com/bfs/album/c44509f040dbee797933fc72793f8287b2579942.png" alt="image-20211225133358962" style="zoom:67%;" / loading="lazy"></p>
+</li>
+</ul>
+<p><strong>关联规则的数学定义</strong></p>
+<img src="https://i0.hdslb.com/bfs/album/2421552438449fabe15803c224d5a60a2f6a397a.png" alt="image-20211225133539251" style="zoom:67%;" / loading="lazy">
+
+<ul>
+<li><p><strong>支持度和置信度的计算</strong></p>
+<p><img src="https://i0.hdslb.com/bfs/album/4e5a16d15691e733614ed70ad280ceb7521d2549.png" alt="image-20211225133638989" loading="lazy"></p>
+</li>
+</ul>
+<p><strong>K-均值算法</strong></p>
+<ul>
+<li><p>聚类算法：将数据集按<strong>数据点间</strong>的<strong>相似关系</strong>划分为<strong>若干互不相交的子集</strong>，每个子集称为一个簇</p>
+</li>
+<li><p>数据点的相似性用某种距离（常用欧氏距离）或近似度度量</p>
+</li>
+<li><p><strong>聚类对数据集的划分原则：</strong> </p>
+<ul>
+<li>类内对象<strong>相似度尽可能大</strong> </li>
+<li>类间对象<strong>相似度尽可能小</strong></li>
+</ul>
+</li>
+<li><p><strong>K-means算法：</strong> </p>
+<ol>
+<li>先从样本集中<strong>随机选取K个样本</strong>做为簇的中心 </li>
+<li>计算所有样本与K个簇中心的距离 </li>
+<li>对于每一个样本，将其<strong>划分到与其距离最近的</strong>簇中心所在的簇中 </li>
+<li>计算<strong>每个簇中心的均值，重新选择一个簇中心，用来更新簇</strong>。重复2-4</li>
+</ol>
+</li>
+<li><p><strong>优点</strong></p>
+<ul>
+<li>原理比较简单，实现也是很容易，收敛速度快</li>
+<li>聚类效果较优 </li>
+<li>算法的可解释度比较强 </li>
+<li>主要需要调参的参数仅仅是簇数k</li>
+</ul>
+</li>
+<li><p><strong>缺点</strong></p>
+<ul>
+<li>K值的选取不好把握 </li>
+<li>对于不是凸的数据集比较难收敛 </li>
+<li>如果各隐含类别的数据（如数据量或方差）不平衡，则聚类效果不佳 </li>
+<li>采用迭代方法，得到的结果只是局部最优 </li>
+<li>噪音和异常点将导致均值偏离严重，对噪声和孤立点比较敏感</li>
+</ul>
+</li>
+</ul>
+<p><strong>聚类与分类的区别？</strong> </p>
+<ul>
+<li><strong>分类是事先定义好类别，类别数不变。  聚类是指根据”物以类聚”原理，将本身没有类别的样本聚集成不同的组</strong></li>
+</ul>
+<p><strong>聚类学习是有监督学习还是无监督学习</strong> </p>
+<ul>
+<li><strong>无监督学习</strong></li>
+</ul>
+<p><strong>均值算法的由来： 质心迭代时，为什么用均值向量作为新质心，就能使质心不再改变而得到</strong> </p>
+<p><strong>数据集的最佳划分呢？</strong></p>
+<ul>
+<li><strong>每个点到所属簇的距离不变</strong></li>
+</ul>
+<h2 id="第十六章-专家（知识系统）"><a href="#第十六章-专家（知识系统）" class="headerlink" title="第十六章 专家（知识系统）"></a><strong>第十六章 专家（知识系统）</strong></h2><p><strong>什么是专家系统？</strong></p>
+<ul>
+<li>**专家系统(Expert System,ES)**：能够像人类专家一样解决困难、复杂的实际问题的计算机(软件)系统</li>
+<li>专家系统的四个要素（重要特征）： <ul>
+<li>应用于某专门领域。</li>
+<li>拥有专家级知识</li>
+<li>能模拟专家的思维</li>
+<li>能达到专家级水平</li>
+</ul>
+</li>
+</ul>
+<p><strong>专家系统的结构</strong></p>
+<ul>
+<li><p><strong>专家系统的基本结构</strong></p>
+<img src="https://i0.hdslb.com/bfs/album/e0f63a947f1dcc0f1bb442879c6152b861cb184a.png" alt="image-20211225135905153" style="zoom:67%;" / loading="lazy"></li>
+</ul>
+<p><strong>专家系统的一般结构</strong></p>
+<img src="https://i0.hdslb.com/bfs/album/7c952081af997f81f7f1e60b6affab3ad19a0084.png" alt="image-20211225135827642" style="zoom:67%;" / loading="lazy">
+
+<ul>
+<li><p><strong>知识库（KB）</strong></p>
+<ul>
+<li>是ES的知识存储器，存放求解问题的领域知识</li>
+</ul>
+</li>
+<li><p><strong>数据库</strong></p>
+<ul>
+<li>即全局数据库或综合数据库</li>
+<li>存储事实、数据、初始状态（证据）和推理的各种中间状态及目标等</li>
+</ul>
+</li>
+<li><p><strong>推理机</strong> </p>
+<ul>
+<li>一组控制、协调整个ES的程序。 </li>
+<li>根据<strong>数据库</strong>当前的输入数据，利用<strong>知识库</strong>中的知识，按一定的推理策略</li>
+</ul>
+</li>
+<li><p><strong>解释模块</strong>：</p>
+<ul>
+<li>是一组程序，包括系统提示、人机对话、能书写规则的语言 以及解释部分程序</li>
+</ul>
+</li>
+<li><p><strong>知识库管理系统</strong></p>
+<ul>
+<li>把知识加入到知识库 </li>
+<li>维持知识的一致性及完整性</li>
+<li>建立起性能良好的知识库</li>
+</ul>
+</li>
+<li><p><strong>人机界面</strong> </p>
+<ul>
+<li>专家系统与外界的接口</li>
+<li>系统与外界的通讯与信息交换</li>
+<li>必须适应非计算机人员的需求</li>
+</ul>
+</li>
+</ul>
+<p><strong>开发工具</strong> </p>
+<ul>
+<li><strong>面向AI的程序设计语言</strong></li>
+<li><strong>知识表示语言</strong></li>
+<li><strong>外壳系统（专家系统工具ESS）</strong></li>
+<li><strong>组合式构造工具</strong></li>
+</ul>
+<p><strong>知识获取</strong> </p>
+<ul>
+<li><p><strong>人工获取</strong> </p>
+</li>
+<li><p><strong>半自动获取</strong> </p>
+</li>
+<li><p><strong>自动获取</strong></p>
+</li>
+</ul>
+</div></section><ul class="post-copyright"><li class="post-copyright-author"><strong>著者：</strong>w_pl</li><li class="post-copyright-link"><strong>記事へのリンク：</strong><a href="https://wplll.github.io/2023/02/20/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%E5%AF%BC%E8%AE%BA/" title="人工智能导论复习">https://wplll.github.io/2023/02/20/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%E5%AF%BC%E8%AE%BA/</a></li><li class="post-copyright-license"><strong>著作権表示：</strong>このブログ内のすべての記事は、特別な記載がない限り <a href="https://creativecommons.org/publicdomain/zero/1.0/deed.zh" target="_blank" rel="noopener" title="CC ZERO 1.0 "><span class="icon iconify" data-icon="ri:creative-commons-line"></span><span class="icon iconify" data-icon="ri:creative-commons-zero-line"></span></a> の下のライセンスで保護されています。</li></ul></article><div class="post-nav"><div class="post-nav-item"></div><div class="post-nav-item"><a class="post-nav-next" href="/2022/10/31/ARIMA/" rel="next" title="ARIMA"><span class="post-nav-text">ARIMA</span><span class="icon iconify" data-icon="ri:arrow-right-s-line"></span></a></div></div></div><div class="hty-card" id="comment"></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2019 – 2023 </span><span class="with-love" id="animate"><span class="icon iconify" data-icon="ri:cloud-line"></span></span><span class="author"> w_pl</span></div><div class="powered"><span>Powered by <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> v5.4.2</span><span class="footer-separator">|</span><span>Theme - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.10.9</span></div><div class="live-time"><span>本博客已运行</span><span id="display_live_time"></span><span class="moe-text">(●'◡'●)</span><script>function blog_live_time() {
+  setTimeout(blog_live_time, 1000);
+  const start = new Date('2022-05-26T00:00:00');
+  const now = new Date();
+  const timeDiff = (now.getTime() - start.getTime());
+  const msPerMinute = 60 * 1000;
+  const msPerHour = 60 * msPerMinute;
+  const msPerDay = 24 * msPerHour;
+  const passDay = Math.floor(timeDiff / msPerDay);
+  const passHour = Math.floor((timeDiff % msPerDay) / 60 / 60 / 1000);
+  const passMinute = Math.floor((timeDiff % msPerHour) / 60 / 1000);
+  const passSecond = Math.floor((timeDiff % msPerMinute) / 1000);
+  display_live_time.innerHTML = ` ${passDay} Days ${passHour} Hours ${passMinute} Minutes ${passSecond} Seconds`;
+}
+blog_live_time();
+</script></div><div class="footer-support"><span>本网站由</span><a class="footer-support-logo" href="https://www.upyun.com/?utm_source=lianmeng&amp;utm_medium=referral" target="blank" title="又拍云"><img height="30" src="https://cdn.jsdelivr.net/gh/YunYouJun/cdn/img/logo/upyun-logo.png" alt="又拍云"></a><span>提供 CDN 加速</span></div></footer></div><a class="hty-icon-button" id="back-to-top" aria-label="back-to-top" href="#"><span class="icon iconify" data-icon="ri:arrow-up-s-line"></span><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a><script>function initMourn() {
+  const date = new Date();
+  const today = (date.getMonth() + 1) + "-" + date.getDate()
+  const mourn_days = ["4-4","9-18"]
+  if (mourn_days.includes(today)) {
+    document.documentElement.style.filter = "grayscale(1)";
+  }
+}
+initMourn();</script></body></html>
